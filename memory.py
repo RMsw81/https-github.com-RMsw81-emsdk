@@ -3,6 +3,7 @@ import pygame
 import sys
 import random
 import pymysql
+import os
 from button import Button
 
 # Costanti per le dimensioni e le risorse

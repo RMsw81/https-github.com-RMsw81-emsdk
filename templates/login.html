@@ -1,0 +1,48 @@
+<!-- login.html -->
+{% extends "base.html" %}
+
+{% block dynamic_content %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  <!-- <link href="static/css/styles.css" rel="stylesheet" /> -->
+  <div class="container-sm" id="content" style="background-image: url('/static/Gold.png')">
+      <br>
+      <h3>Login</h3>
+      <form method="post" action="/login" class="form-control-sm">
+          <div class="">
+              <label for="username" class="form-label">Email</label>
+              <input type="text" class="form-control" id="username" name="username" required>
+          </div>
+          <div class="">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+              <button type="button" id="togglePassword" class="">
+                  Mostra
+              </button>
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+          <div><br><p>Non hai un account? <a href="/register">Registrati</a></p><br></div>
+      </form>    
+  </div>
+  <script src="static/js/script.js"></script>
+  <script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        // Trova l'input della password
+        var passwordInput = document.getElementById('password');
+        
+        // Controlla il tipo attuale dell'input e alterna tra "password" e "text"
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            this.textContent = 'Nascondi';
+        } else {
+            passwordInput.type = 'password';
+            this.textContent = 'Mostra';
+        }
+    });
+</script>
+{% endblock %}

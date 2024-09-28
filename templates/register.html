@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block dynamic_content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+    <div class="container-sm" id="content" style="background-image: url('/static/Gold.png')">
+    <br>
+        <h3>Registrazione</h3>
+        <form method="POST" action="/register">
+            <div class="mb-3">
+                <label for="username" class="form-label">Email</label>
+                <input type="email" class="form-control" id="username" name="username" required>
+                <div id="emailHelp" class="form-text">Inserisci un'email valida.</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" data-toggle="password" name="password" required>
+                <div id="passwordHelp" class="form-text">La password deve contenere almeno 8 caratteri, una lettera maiuscola, un numero e un carattere speciale.</div>
+            </div>
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Conferma Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Registrati</button>
+            <div><br><p>Hai già un account? <a href="/login">Accedi</a></p><br></div>
+        </form>
+    </div>
+    <script src="static/js/script.js"></script>
+{% endblock %}

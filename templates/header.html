@@ -1,0 +1,24 @@
+<!-- header.html -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<header class="masthead text-center text-white">
+    <div class="masthead-content">
+      <div class="masthead-content">
+        <!-- Blocco per contenuto dinamico -->
+        {% block dynamic_content %}
+           {% include 'text.html' %}
+          <!-- Questo blocco verrà sovrascritto nelle pagine specifiche (es. login.html, register.html) -->
+        {% endblock %}
+      </div>
+    </div>
+    <div class="bg-circle-1 bg-circle"></div>
+    <div class="bg-circle-2 bg-circle"></div>
+    <div class="bg-circle-3 bg-circle"></div>
+    <div class="bg-circle-4 bg-circle"></div>
+</header>

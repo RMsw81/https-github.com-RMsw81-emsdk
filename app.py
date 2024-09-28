@@ -5,9 +5,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql.cursors
 import subprocess
 import os
+import base64
+
+# Genera una chiave segreta casuale di 24 byte
+secret_key = base64.urlsafe_b64encode(os.urandom(24)).decode('utf-8')
+#print(secret_key)
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '9iKjn_0p@pL'
+app.config['SECRET_KEY'] = secret_key
 
 # Leggi le variabili d'ambiente
 db_host = os.getenv('DB_HOST', 'localhost')

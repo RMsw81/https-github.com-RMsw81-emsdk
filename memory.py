@@ -27,11 +27,19 @@ DIFFICULTY_MAP = {
 class Database:
     def __init__(self):
         try:
+            # Leggi le variabili d'ambiente
+            db_host = os.getenv('DB_HOST', 'localhost')
+            db_port = int(os.getenv('DB_PORT', 3306))
+            db_user = os.getenv('DB_USER', 'user')
+            db_password = os.getenv('DB_PASSWORD', 'password')
+            db_name = os.getenv('DB_NAME', 'db')
+            # Crea la connessione
             self.conn = pymysql.connect(
-                host="localhost",
-                user="user",
-                password="Y9puX%40a8",
-                database="db"
+                host=db_host,
+                user=db_user,
+                password=db_password,
+                database=db_name,
+                port=db_port
             )
             self.cursor = self.conn.cursor(pymysql.cursors.DictCursor)
             self.create_table()  # Creazione della tabella se non esiste

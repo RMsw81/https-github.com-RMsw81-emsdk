@@ -62,7 +62,7 @@ jobs:
         DB_HOST: 'RobertaMerlo.mysql.pythonanywhere-services.com'
         DB_PORT: 3306
         DB_USER: 'RobertaMerlo'
-        DB_PASSWORD: test_password
+        DB_PASSWORD: 'Y9puX%40a8'
         DB_NAME: 'RobertaMerlo$default'
       run: |
         python app.py

@@ -10,14 +10,28 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '9iKjn_0p@pL'
 
 # Configura la connessione al database
-db_config = {
-    'host': 'localhost',
-    'user': 'user',
-    'password': 'Y9puX%40a8',
-    'database': 'db',
-    'cursorclass': pymysql.cursors.DictCursor
-}
+#db_config = {
+#    'host': 'localhost',
+#    'user': 'user',
+#    'password': 'Y9puX%40a8',
+#    'database': 'db',
+#    'cursorclass': pymysql.cursors.DictCursor
+#}
+# Leggi le variabili d'ambiente
+db_host = os.getenv('DB_HOST', 'localhost')
+db_port = int(os.getenv('DB_PORT', 3306))
+db_user = os.getenv('DB_USER', 'user')
+db_password = os.getenv('DB_PASSWORD', 'password')
+db_name = os.getenv('DB_NAME', 'db')
 
+# Crea la connessione
+self.conn = pymysql.connect(
+    host=db_host,
+    user=db_user,
+    password=db_password,
+    database=db_name,
+    port=db_port
+)
 # Inizializza Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)

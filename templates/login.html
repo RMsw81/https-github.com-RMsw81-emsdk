@@ -1,4 +1,3 @@
-<!-- login.html -->
 {% extends "base.html" %}
 
 {% block dynamic_content %}
@@ -9,7 +8,7 @@
       {% endfor %}
     {% endif %}
   {% endwith %}
-  <!-- <link href="static/css/styles.css" rel="stylesheet" /> -->
+  
   <div class="container-sm" id="content" style="background-image: url('/static/Gold.png')">
       <br>
       <h3>Login</h3>
@@ -20,29 +19,28 @@
           </div>
           <div class="">
               <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" name="password" required>
-              <button type="button" id="togglePassword" class="">
-                  Mostra
-              </button>
+              <div class="input-group">
+                  <input type="password" class="form-control" id="password" name="password" required>
+                  <button type="button" id="togglePassword" class="btn btn-outline-secondary">
+                      Mostra
+                  </button>
+              </div>
           </div>
           <button type="submit" class="btn btn-primary">Login</button>
           <div><br><p>Non hai un account? <a href="/register">Registrati</a></p><br></div>
       </form>    
   </div>
-  <script src="static/js/script.js"></script>
+
   <script>
-    document.getElementById('togglePassword').addEventListener('click', function () {
-        // Trova l'input della password
-        var passwordInput = document.getElementById('password');
+    document.addEventListener('DOMContentLoaded', function () {
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
         
-        // Controlla il tipo attuale dell'input e alterna tra "password" e "text"
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            this.textContent = 'Nascondi';
-        } else {
-            passwordInput.type = 'password';
-            this.textContent = 'Mostra';
-        }
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? 'Mostra' : 'Nascondi';
+        });
     });
-</script>
+  </script>
 {% endblock %}

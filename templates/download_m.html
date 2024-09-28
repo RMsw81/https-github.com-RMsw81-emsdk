@@ -1,0 +1,48 @@
+{% block content %}
+{% endblock %}
+
+<link href="static/css/styles.css" rel="stylesheet" />
+<div class="container-sm" id="dynamic-section" style="background-image: url('/static/Gold.png')">
+    <!-- Content section 2 -->
+    <section id="page-top">
+        <div class="container-sm" id="content"><br><br>
+            <div class="row gx-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="p-5"><img class="img-fluid rounded-circle" src="static/assets/img/02.jpg" alt="Memory Game" onclick=""/></div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="p-5">
+                        <h2 class="display-4">Memory game</h2>
+                        <p>Metti a dura prova la tua memoria e trova le coppie di carte nel minor tempo possibile!!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container-sm" id="content" style="background-image: url('/static/Gold.png')">
+            <br>
+            <h3>Download Memory_Game</h3>
+            <div>
+                <ul>
+                    <li><a href="{{ url_for('static', filename='downloads/Memory_Game_Windows.zip') }}" download>Download Windows</a></li>
+                    <li><a href="{{ url_for('static', filename='downloads/Memory_Game_MacOS.zip') }}" download>Download MacOS</a></li>
+                    <br>
+                </ul>  
+                <button class="btn btn-outline-secondary" id="backButton" onclick="goToIndex()"> Indietro</button><br><br>   
+            </div>  
+             
+        </div>    
+    </section>
+</div> 
+
+<!-- Button to go back -->
+
+
+<script src="static/js/scripts.js"></script>
+<script>
+    function goToIndex() {
+        window.location.href = '/'; // Reindirizza alla pagina index
+    }
+</script>
+

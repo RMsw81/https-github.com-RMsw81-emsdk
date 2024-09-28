@@ -4,6 +4,7 @@ import time
 import datetime
 import sys
 import pymysql
+import os
 from button import Button  
 
 # Classe per gestire la connessione al database

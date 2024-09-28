@@ -9,29 +9,15 @@ import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '9iKjn_0p@pL'
 
-# Configura la connessione al database
-#db_config = {
-#    'host': 'localhost',
-#    'user': 'user',
-#    'password': 'Y9puX%40a8',
-#    'database': 'db',
-#    'cursorclass': pymysql.cursors.DictCursor
-#}
 # Leggi le variabili d'ambiente
-db_host = os.getenv('DB_HOST', 'localhost')
-db_port = int(os.getenv('DB_PORT', 3306))
-db_user = os.getenv('DB_USER', 'user')
-db_password = os.getenv('DB_PASSWORD', 'password')
-db_name = os.getenv('DB_NAME', 'db')
+db_config = {
+    'host': os.getenv('DB_HOST', 'localhost'),
+    'user': os.getenv('DB_USER', 'user'),
+    'password': os.getenv('DB_PASSWORD', 'password'),
+    'database': os.getenv('DB_NAME', 'db'),
+    'cursorclass': pymysql.cursors.DictCursor
+}
 
-# Crea la connessione
-self.conn = pymysql.connect(
-    host=db_host,
-    user=db_user,
-    password=db_password,
-    database=db_name,
-    port=db_port
-)
 # Inizializza Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -43,16 +29,15 @@ def get_db_connection():
 
 # Funzione per creare il database e la tabella
 def create_database_and_table():
-    conn = pymysql.connect(
+    connection = pymysql.connect(
         host=db_config['host'],
         user=db_config['user'],
         password=db_config['password']
     )
     try:
-        with conn.cursor() as cursor:
+        with connection.cursor() as cursor:
             cursor.execute("CREATE DATABASE IF NOT EXISTS db")
-            conn.select_db('db')
-            
+            connection.select_db('db')
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS user (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -60,11 +45,11 @@ def create_database_and_table():
                     password VARCHAR(510) NOT NULL
                 )
             ''')
-            conn.commit()
+            connection.commit()
     except pymysql.MySQLError as e:
         print(f"Errore nella creazione del database o della tabella: {e}")
     finally:
-        conn.close()
+        connection.close()
 
 # Esegui la creazione del database e della tabella prima di avviare l'app
 create_database_and_table()
@@ -203,6 +188,7 @@ def register():
         finally:
             connection.close()
     return render_template('register.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

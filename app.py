@@ -15,11 +15,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
 
 # Leggi le variabili d'ambiente
-db_host = os.getenv('DB_HOST', 'localhost')
-db_port = int(os.getenv('DB_PORT', 3306))
-db_user = os.getenv('DB_USER', 'user')
-db_password = os.getenv('DB_PASSWORD', 'password')
-db_name = os.getenv('DB_NAME', 'db')
+db_host = 'RobertaMerlo.mysql.pythonanywhere-services.com'
+db_user = 'RobertaMerlo'
+db_password = 'Y9puX%40a8'  # Sostituisci con la tua password del database
+db_name = 'RobertaMerlo$db'  # Assicurati di utilizzare il nome del database corretto
 
 # Crea la connessione al database
 def get_db_connection():
@@ -29,13 +28,12 @@ def get_db_connection():
             user=db_user,
             password=db_password,
             database=db_name,
-            port=db_port,
+            port=3306,  # porta predefinita
             cursorclass=pymysql.cursors.DictCursor
         )
     except pymysql.MySQLError as e:
         print(f"Errore nella connessione al database: {e}")
         return None
-
 # Inizializza Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)

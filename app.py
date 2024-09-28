@@ -10,29 +10,38 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '9iKjn_0p@pL'
 
 # Leggi le variabili d'ambiente
-db_config = {
-    'host': os.getenv('DB_HOST', 'localhost'),
-    'user': os.getenv('DB_USER', 'user'),
-    'password': os.getenv('DB_PASSWORD', 'password'),
-    'database': os.getenv('DB_NAME', 'db'),
-    'cursorclass': pymysql.cursors.DictCursor
-}
+db_host = os.getenv('DB_HOST', 'localhost')
+db_port = int(os.getenv('DB_PORT', 3306))
+db_user = os.getenv('DB_USER', 'user')
+db_password = os.getenv('DB_PASSWORD', 'password')
+db_name = os.getenv('DB_NAME', 'db')
+
+# Crea la connessione al database
+def get_db_connection():
+    try:
+        return pymysql.connect(
+            host=db_host,
+            user=db_user,
+            password=db_password,
+            database=db_name,
+            port=db_port,
+            cursorclass=pymysql.cursors.DictCursor
+        )
+    except pymysql.MySQLError as e:
+        print(f"Errore nella connessione al database: {e}")
+        return None
 
 # Inizializza Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Crea la connessione al database
-def get_db_connection():
-    return pymysql.connect(**db_config)
-
 # Funzione per creare il database e la tabella
 def create_database_and_table():
     connection = pymysql.connect(
-        host=db_config['host'],
-        user=db_config['user'],
-        password=db_config['password']
+        host=db_host,
+        user=db_user,
+        password=db_password
     )
     try:
         with connection.cursor() as cursor:
@@ -173,14 +182,6 @@ def register():
                 connection.commit()
                 flash('Registrazione avvenuta con successo! Per favore effettua il login.', 'success')
                 
-                # Debug: Verifica inserimento dell'utente
-                cursor.execute('SELECT * FROM user WHERE username = %s', (username,))
-                inserted_user = cursor.fetchone()
-                if inserted_user:
-                    print(f"Utente {username} registrato con successo.")
-                else:
-                    print(f"Registrazione dell'utente {username} fallita.")
-                
                 return redirect(url_for('login'))
         except pymysql.MySQLError as e:
             flash(f'Errore durante la registrazione: {e}', 'danger')
@@ -202,16 +203,9 @@ def login():
                 cursor.execute(sql, (username,))
                 user = cursor.fetchone()
                 
-                # Debug: Controlla il risultato della query
-                if user:
-                    print(f"Utente trovato: {user}")
-                else:
-                    print(f"Utente non trovato per username: {username}")
-                
                 if user and check_password_hash(user['password'], password):
                     user_obj = User(user['id'], user['username'], user['password'])
                     login_user(user_obj)
-                    print(f"Utente {username} loggato con successo.")
                     return redirect(url_for('index'))
                 else:
                     flash('Accesso fallito. Controlla username e/o password', 'danger')

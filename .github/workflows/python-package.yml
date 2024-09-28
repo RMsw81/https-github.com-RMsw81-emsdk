@@ -49,6 +49,13 @@ jobs:
       run: |
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Wait for MySQL to be ready
+      run: |
+        for i in {1..30}; do
+          mysqladmin ping -h 127.0.0.1 --silent && echo "MySQL is up!" && break;
+          echo "Waiting for MySQL..."
+          sleep 5;
+        done
 
     - name: Run app.py
       env:

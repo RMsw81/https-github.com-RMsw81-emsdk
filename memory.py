@@ -29,11 +29,10 @@ class Database:
     def __init__(self):
         try:
             # Leggi le variabili d'ambiente
-            db_host = os.getenv('DB_HOST', 'localhost')
-            db_port = int(os.getenv('DB_PORT', 3306))
-            db_user = os.getenv('DB_USER', 'user')
-            db_password = os.getenv('DB_PASSWORD', 'password')
-            db_name = os.getenv('DB_NAME', 'db')
+            db_host = 'RobertaMerlo.mysql.pythonanywhere-services.com'
+            db_user = 'RobertaMerlo'
+            db_password = 'Y9puX%40a8'  # Sostituisci con la tua password del database
+                db_name = 'RobertaMerlo$db'
             # Crea la connessione
             self.conn = pymysql.connect(
                 host=db_host,

@@ -110,7 +110,7 @@ def start_game():
         return jsonify({'status': 'Gioco avviato'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
 @app.route('/start_memory', methods=['POST'])
 @login_required
 def start_memory():
@@ -174,17 +174,17 @@ def register():
                 sql = 'SELECT * FROM user WHERE username = %s'
                 cursor.execute(sql, (username,))
                 user = cursor.fetchone()
-                
+
                 if user:
                     flash('Username già esistente. Per favore scegli un nome diverso.', 'danger')
                     return redirect(url_for('register'))
-                
+
                 hashed_password = generate_password_hash(password)
                 sql = 'INSERT INTO user (username, password) VALUES (%s, %s)'
                 cursor.execute(sql, (username, hashed_password))
                 connection.commit()
                 flash('Registrazione avvenuta con successo! Per favore effettua il login.', 'success')
-                
+
                 return redirect(url_for('login'))
         except pymysql.MySQLError as e:
             flash(f'Errore durante la registrazione: {e}', 'danger')
@@ -198,14 +198,14 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        
+
         connection = get_db_connection()
         try:
             with connection.cursor() as cursor:
                 sql = 'SELECT * FROM user WHERE username = %s'
                 cursor.execute(sql, (username,))
                 user = cursor.fetchone()
-                
+
                 if user and check_password_hash(user['password'], password):
                     user_obj = User(user['id'], user['username'], user['password'])
                     login_user(user_obj)

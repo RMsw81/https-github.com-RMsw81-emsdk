@@ -93,6 +93,11 @@ def load_user(user_id):
 def index():
     return render_template('index.html')
 
+@app.route('/start_p')
+@login_required
+def start_p():
+    return render_template('p/build/web/index.html')
+
 @app.route('/start_game', methods=['POST'])
 @login_required
 def start_game():

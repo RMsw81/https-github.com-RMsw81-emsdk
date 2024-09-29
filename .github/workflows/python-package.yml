@@ -41,7 +41,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install flake8 pytest pymysql
+        python -m pip install flake8 pytest pymysql pygame  # Aggiunto pygame
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Lint with flake8
@@ -59,11 +59,11 @@ jobs:
 
     - name: Run app.py
       env:
-        DB_HOST: 127.0.0.1
+        DB_HOST: 'RobertaMerlo.mysql.pythonanywhere-services.com'
         DB_PORT: 3306
-        DB_USER: test_user
-        DB_PASSWORD: test_password
-        DB_NAME: db  # Assicurati che il nome del database sia corretto
+        DB_USER: 'RobertaMerlo'
+        DB_PASSWORD: 'Y9puX%40a8'
+        DB_NAME: 'RobertaMerlo$default'
       run: |
         python app.py
 

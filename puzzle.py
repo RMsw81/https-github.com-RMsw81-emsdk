@@ -11,11 +11,10 @@ from button import Button
 class Database:
     def __init__(self):
         # Leggi le variabili d'ambiente
-        db_host = os.getenv('DB_HOST', 'localhost')
-        db_port = int(os.getenv('DB_PORT', 3306))
-        db_user = os.getenv('DB_USER', 'user')
-        db_password = os.getenv('DB_PASSWORD', 'password')
-        db_name = os.getenv('DB_NAME', 'db')
+        db_host = 'RobertaMerlo.mysql.pythonanywhere-services.com'
+        db_user = 'RobertaMerlo'
+        db_password = 'Y9puX%40a8'  # Inserisci qui la password del database
+        db_name = 'RobertaMerlo$default'
         # Crea la connessione
         self.conn = pymysql.connect(
             host=db_host,

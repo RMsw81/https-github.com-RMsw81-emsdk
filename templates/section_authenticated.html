@@ -12,7 +12,7 @@
         <div class="container-sm" id="masthead"><br><br>
             <div class="row gx-5 align-items-center">
                 <div class="col-lg-6 order-lg-2">
-                    <div class="p-5"><a href="/start_p"><img class="img-fluid rounded-circle" src="static/assets/img/01.jpg" alt="Puzzle Game" onClick="start_p()"/></a></div>
+                    <div class="p-5"><a href=""><img class="img-fluid rounded-circle" src="static/assets/img/01.jpg" alt="Puzzle Game" onClick="start_p()"/></a></div>
                 </div>
                 <div class="col-lg-6 order-lg-1">
                     <div class="p-5">
@@ -98,6 +98,21 @@
         $.ajax({
             type: 'GET',
             url: '/down_m',  // Assicurati che questa rotta esista nel tuo app.py
+            success: function(response) {
+                console.log(response);
+               
+            },
+            error: function(error) {
+                console.error('Errore durante l\'apertura della pagina:', error);
+                alert("Errore durante l'avvio della pagina");
+            }
+        });
+    }
+
+    function start_p() {
+        $.ajax({
+            type: 'GET',
+            url: '/start_p',  // Assicurati che questa rotta esista nel tuo app.py
             success: function(response) {
                 console.log(response);
                

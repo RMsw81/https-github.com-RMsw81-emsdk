@@ -1,8 +1,0 @@
-{
-    "name": "PuzzleGame",
-    "description": "PuzzleGame",
-    "version": "1.0",
-    "main": "main.py",
-    "assets": ["assets/"]
-  }
-  

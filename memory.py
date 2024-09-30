@@ -32,7 +32,7 @@ class Database:
             db_host = 'RobertaMerlo.mysql.pythonanywhere-services.com'
             db_user = 'RobertaMerlo'
             db_password = 'Y9puX%40a8'  
-                db_name = 'RobertaMerlo$db'
+            db_name = 'RobertaMerlo$db'
             # Crea la connessione
             self.conn = pymysql.connect(
                 host=db_host,

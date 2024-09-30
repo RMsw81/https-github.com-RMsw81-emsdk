@@ -27,9 +27,13 @@ jobs:
         pip install flake8 pygame pygbag
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+    - name: List files in p/
+      run: |
+        ls -la p/
+
     - name: Build game with pygbag
       run: |
-        pygbag p/ --verbose
+        pygbag p/main.py --verbose  # Specifica il percorso completo al main.py
 
     - name: List generated files
       run: |
@@ -39,4 +43,3 @@ jobs:
       run: |
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-

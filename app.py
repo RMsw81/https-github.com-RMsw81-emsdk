@@ -1,5 +1,5 @@
 import re
-from flask import Flask, jsonify, render_template, redirect, url_for, request, flash
+from flask import Flask, jsonify, render_template, redirect, url_for, request, flash, send_from_directory
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql.cursors
@@ -108,10 +108,10 @@ def start_p():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/p/build/web/<path:filename>')
+@app.route('/assets/games/<path:filename>')
 @login_required
-def serve_pygbag_files(filename):
-    return send_from_directory('/p/build/web', filename)
+def serve_game_assets(filename):
+    return send_from_directory('p/build/web/assets/games', filename)
         
 @app.route('/start_game', methods=['POST'])
 @login_required

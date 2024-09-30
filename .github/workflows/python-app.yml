@@ -41,7 +41,7 @@ jobs:
     - name: Build game with pygbag
       run: |
         echo "Building the game with pygbag..."
-        pygbag p/main.py --verbose  # Specifica il percorso completo al main.py
+        pygbag p/main.py
 
     - name: List generated files
       run: |

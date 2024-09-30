@@ -111,7 +111,8 @@ def start_p():
 @app.route('/assets/games/<path:filename>')
 @login_required
 def serve_game_assets(filename):
-    return send_from_directory('p/build/web/assets/games', filename)
+    assets_directory = os.path.join(app.root_path, 'p/build/web/assets/games')
+    return send_from_directory(assets_directory, filename)
         
 @app.route('/start_game', methods=['POST'])
 @login_required

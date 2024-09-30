@@ -96,6 +96,21 @@ def index():
 @app.route('/start_p', methods=['POST'])
 @login_required
 def start_p():
+    try:
+        game_script = '/p/build/web/main.py'
+        if not os.path.isfile(game_script):
+            return jsonify({'error': f'Script {game_script} non trovato'}), 404
+
+        result = subprocess.Popen(['python3', game_script, current_user.username], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = result.communicate()
+
+        if result.returncode != 0:
+            return jsonify({'error': stderr.decode('utf-8')}), 500
+
+        return jsonify({'status': 'Gioco avviato'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
     return render_template('/p/build/web/index.html')
 
 @app.route('/start_game', methods=['POST'])

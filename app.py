@@ -96,11 +96,17 @@ def index():
 @app.route('/start_p', methods=['GET'])
 @login_required
 def start_p():
+    # Definisci il percorso del file HTML
     index_path = 'p/build/web/index.html'
+    
+    # Controlla se il file esiste
     if not os.path.isfile(index_path):
+        # Se il file non esiste, restituisci un errore 404
         return jsonify({'error': 'File non trovato', 'path': index_path}), 404
     
+    # Se il file esiste, invialo come risposta
     return send_from_directory('p/build/web', 'index.html')
+
 
 
 

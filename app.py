@@ -109,6 +109,11 @@ def start_p():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/p/build/web/<path:filename>')
+@login_required
+def serve_pygbag_files(filename):
+    return send_from_directory('/p/build/web', filename)
         
 @app.route('/start_game', methods=['POST'])
 @login_required

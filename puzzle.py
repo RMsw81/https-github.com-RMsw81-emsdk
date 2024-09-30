@@ -21,7 +21,7 @@ class Database:
             user=db_user,
             password=db_password,
             database=db_name,
-            port=db_port
+            #port=db_port
         )
         self.cursor = self.conn.cursor()
         self.create_table()

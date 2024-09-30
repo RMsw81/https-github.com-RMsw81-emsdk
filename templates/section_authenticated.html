@@ -12,7 +12,7 @@
         <div class="container-sm" id="masthead"><br><br>
             <div class="row gx-5 align-items-center">
                 <div class="col-lg-6 order-lg-2">
-                    <div class="p-5"><a href=""><img class="img-fluid rounded-circle" src="static/assets/img/01.jpg" alt="Puzzle Game" id="" onClick="start_p()"/></a></div>
+                    <div class="p-5"><a href=""><img class="img-fluid rounded-circle" src="static/assets/img/01.jpg" alt="Puzzle Game" id="puzzle-game-btn" /></a></div>
                 </div>
                 <div class="col-lg-6 order-lg-1">
                     <div class="p-5">
@@ -112,17 +112,23 @@
     function start_p() {
         $.ajax({
             type: 'GET',
-            url: '/start_p',  
+            url: '/start_p',
             success: function(response) {
-                console.log(response);
-               
+                console.log('Gioco avviato con successo:', response);
+                // Esempio: potresti voler ridirigere l'utente alla pagina del gioco
+                window.location.href = '/p/build/web/index.html';
             },
             error: function(error) {
-                console.error('Errore durante l\'appppp della pagina:', error);
-                alert("Errore durante l'avvio della pagina");
+                console.error('Errore durante l\'avvio del gioco:', error);
+                alert("Errore durante l'avvio del gioco");
             }
         });
     }
+
+    // Associa l'evento click al pulsante del gioco
+    $('#puzzle-game-btn').click(function() {
+        start_p();
+    });
 
     </script>
     

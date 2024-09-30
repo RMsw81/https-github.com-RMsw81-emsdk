@@ -93,26 +93,23 @@ def load_user(user_id):
 def index():
     return render_template('index.html')
 
-@app.route('/start_p', methods=['POST'])
+@app.route('/start_p', methods=['GET'])
 @login_required
 def start_p():
     try:
-        game_script = '/p/build/web/main.py'
-        if not os.path.isfile(game_script):
-            return jsonify({'error': f'Script {game_script} non trovato'}), 404
+        # Percorso al file HTML generato da Pygbag
+        game_path = os.path.join(os.getcwd(), 'p', 'build', 'web', 'index.html')
 
-        result = subprocess.Popen(['python3', game_script, current_user.username], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = result.communicate()
+        # Controlla se il file esiste
+        if not os.path.isfile(game_path):
+            return jsonify({'error': f'Il gioco non è stato trovato'}), 404
 
-        if result.returncode != 0:
-            return jsonify({'error': stderr.decode('utf-8')}), 500
+        # Servi il file HTML
+        return render_template('p/build/web/index.html')
 
-        return jsonify({'status': 'Gioco avviato'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-    return render_template('/p/build/web/index.html')
-
+        
 @app.route('/start_game', methods=['POST'])
 @login_required
 def start_game():

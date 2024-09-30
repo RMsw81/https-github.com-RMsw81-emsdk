@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Check out the repository
+      uses: actions/checkout@v4
 
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
@@ -29,17 +30,22 @@ jobs:
 
     - name: List files in p/
       run: |
+        echo "Listing files in the p/ directory:"
         ls -la p/
 
     - name: Build game with pygbag
       run: |
+        echo "Building the game with pygbag..."
         pygbag p/main.py --verbose  # Specifica il percorso completo al main.py
 
     - name: List generated files
       run: |
+        echo "Listing generated files in the build/web/ directory:"
         ls -la p/build/web/
 
     - name: Lint with flake8
       run: |
+        echo "Running flake8 linter..."
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+

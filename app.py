@@ -97,18 +97,16 @@ def index():
 @login_required
 def start_p():
     try:
-        # Percorso al file HTML generato da Pygbag
-        game_path = os.path.join(os.getcwd(), 'p', 'build', 'web', 'index.html')
+        # Verifica che il file index.html esista
+        index_path = 'p/build/web/index.html'
+        if not os.path.isfile(index_path):
+            return jsonify({'error': f'Script {index_path} non trovato'}), 404
 
-        # Controlla se il file esiste
-        if not os.path.isfile(game_path):
-            return jsonify({'error': f'Il gioco non è stato trovato'}), 404
-
-        # Servi il file HTML
-        return render_template('p/build/web/index.html')
-
+        # Serve il file HTML di pygbag per eseguire il gioco
+        return render_template(index_path)  # Usa il template pygbag
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/p/build/web/<path:filename>')
 @login_required

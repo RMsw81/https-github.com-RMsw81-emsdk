@@ -107,6 +107,10 @@ def start_p():
     # Se il file esiste, invialo come risposta
     return send_from_directory('p/build/web', 'index.html')
 
+@app.route('/p.apk')
+@login_required
+def serve_apk():
+    return send_from_directory('/home/RobertaMerlo/My_Games/p/build/web', 'p.apk')
 
 
 @app.route('/assets/games/<path:filename>')

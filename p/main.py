@@ -3,9 +3,8 @@ import random
 import time
 import datetime
 import sys
-import getpass  # Importa il modulo getpass
+import getpass
 
-# Classe per gestire i record
 class RecordManager:
     def __init__(self):
         self.records = {}
@@ -19,7 +18,6 @@ class RecordManager:
     def load_best_record(self, user, difficulty):
         return self.records.get((user, difficulty))
 
-# Funzione per caricare un'immagine
 def load_image(path):
     try:
         return pygame.image.load(path)
@@ -41,7 +39,6 @@ class Button:
                 return True
         return False
 
-# Classe per gestire il gioco del puzzle
 class PuzzleGame:
     def __init__(self, image, rows, cols, offset_x=150, offset_y=104):
         self.image = image
@@ -137,7 +134,6 @@ class PuzzleGame:
             empty_row_from_bottom = self.rows - self.empty_pos[1]
             return (inversions + empty_row_from_bottom) % 2 == 1
 
-# Classe principale per gestire la logica del puzzle e l'interfaccia utente
 class Puzzle:
     def __init__(self, screen, font, clock, user):
         self.screen = screen
@@ -152,7 +148,7 @@ class Puzzle:
         self.best_time_text = ""
         self.elapsed_time = 0
         self.start_time = None
-        self.record_manager = RecordManager()  # Usa il RecordManager per gestire i record
+        self.record_manager = RecordManager()
         self.load_assets()
 
     def load_assets(self):
@@ -163,7 +159,6 @@ class Puzzle:
             "hard": pygame.transform.scale(load_image("assets/games/puzzle_image_hard.jpg"), (400, 400))
         }
 
-        # Pulsanti del menu
         self.start_button = Button(pygame.transform.scale(load_image("assets/games/start_button.png"), (100, 45)), (290, 520))
         self.easy_button = Button(pygame.transform.scale(load_image("assets/games/easy_button.png"), (100, 45)), (180, 550))
         self.medium_button = Button(pygame.transform.scale(load_image("assets/games/medium_button.png"), (100, 45)), (300, 550))
@@ -217,24 +212,22 @@ class Puzzle:
             if not self.game_started:
                 if self.start_button.click(event):
                     print("Pulsante Start cliccato")
-                    self.initialize_puzzle("easy", 3, 3)  # Inizia con la difficoltà facile per esempio
+                    self.initialize_puzzle("easy", 3, 3)
             else:
                 self.puzzle.handle_click(event.pos)
                 if self.puzzle.check_win():
                     print("Puzzle completato!")
-                    self.record_manager.save_record(self.elapsed_time, self.user, self.difficulty)  # Salva il record
+                    self.record_manager.save_record(self.elapsed_time, self.user, self.difficulty)
                     self.game_started = False
 
-# Funzione principale di esecuzione del gioco
 def main():
     pygame.init()
     screen = pygame.display.set_mode((700, 700))
     font = pygame.font.Font(None, 36)
     clock = pygame.time.Clock()
 
-    user = getpass.getuser()  # Acquisisce il nome dell'utente dal sistema
+    user = getpass.getuser()
 
-    # Crea un'istanza di Puzzle
     puzzle_game = Puzzle(screen, font, clock, user)
 
     # Ciclo principale del gioco
@@ -253,4 +246,4 @@ def main():
     pygame.quit()
 
 if __name__ == "__main__":
-    main()
+   main()

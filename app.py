@@ -17,8 +17,8 @@ app.config['SECRET_KEY'] = secret_key
 # Leggi le variabili d'ambiente
 db_host = 'RobertaMerlo.mysql.pythonanywhere-services.com'
 db_user = 'RobertaMerlo'
-db_password = 'Y9puX%40a8'  
-db_name = 'RobertaMerlo$db'  
+db_password = 'Y9puX%40a8'
+db_name = 'RobertaMerlo$db'
 
 # Crea la connessione al database
 def get_db_connection():
@@ -98,15 +98,14 @@ def index():
 def start_p():
     # Definisci il percorso del file HTML
     index_path = 'p/build/web/index.html'
-    
+
     # Controlla se il file esiste
     if not os.path.isfile(index_path):
         # Se il file non esiste, restituisci un errore 404
         return jsonify({'error': 'File non trovato', 'path': index_path}), 404
-    
+
     # Se il file esiste, invialo come risposta
     return send_from_directory('p/build/web', 'index.html')
-
 
 
 
@@ -115,23 +114,7 @@ def start_p():
 def serve_game_assets(filename):
     assets_directory = os.path.join(app.root_path, 'p/build/web/assets/games')
     return send_from_directory(assets_directory, filename)
-        
-@app.route('/start_game', methods=['POST'])
-@login_required
-def start_game():
-    try:
-        # Specifica il percorso del file main.py
-        game_script = 'p/main.py'
-        
-        if not os.path.isfile(game_script):
-            return jsonify({'error': f'Script {game_script} non trovato'}), 404
 
-        # Avvia il gioco come un processo separato
-        result = subprocess.Popen(['python3', game_script], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        return jsonify({'status': 'Gioco avviato'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/start_memory', methods=['POST'])
 @login_required

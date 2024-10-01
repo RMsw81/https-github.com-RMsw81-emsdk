@@ -43,7 +43,7 @@ class Button:
 
 # Classe per gestire il gioco del puzzle
 class PuzzleGame:
-    def __init__(self, image, rows, cols, offset_x=150, offset_y=104, click_sound=None, win_sound=None):
+    def __init__(self, image, rows, cols, offset_x=150, offset_y=104):
         self.image = image
         self.rows = rows
         self.cols = cols
@@ -51,8 +51,6 @@ class PuzzleGame:
         self.offset_y = offset_y
         self.pieces = []
         self.empty_pos = (cols - 1, rows - 1)
-        self.click_sound = click_sound
-        self.win_sound = win_sound
         self.create_pieces()
         self.shuffle_pieces()
 
@@ -108,11 +106,6 @@ class PuzzleGame:
             for piece in self.pieces:
                 if piece['current_pos'] == (x, y):
                     piece['current_pos'], self.empty_pos = self.empty_pos, piece['current_pos']
-                    if self.click_sound:
-                        self.click_sound.play()
-                    if self.check_win():
-                        if self.win_sound:
-                            self.win_sound.play()
                     break
 
     def is_adjacent(self, pos1, pos2):
@@ -169,12 +162,6 @@ class Puzzle:
             "medium": pygame.transform.scale(load_image("assets/games/puzzle_image_medium.jpg"), (400, 400)),
             "hard": pygame.transform.scale(load_image("assets/games/puzzle_image_hard.jpg"), (400, 400))
         }
-        self.click_sound = pygame.mixer.Sound("assets/games/click_sound.wav")
-        self.win_sounds = {
-            "easy": pygame.mixer.Sound("assets/games/win_sound_easy.ogg"),
-            "medium": pygame.mixer.Sound("assets/games/win_sound_medium.ogg"),
-            "hard": pygame.mixer.Sound("assets/games/win_sound_hard.ogg")
-        }
 
         # Pulsanti del menu
         self.start_button = Button(pygame.transform.scale(load_image("assets/games/start_button.png"), (100, 45)), (290, 520))
@@ -195,7 +182,7 @@ class Puzzle:
     def initialize_puzzle(self, difficulty, rows, cols):
         print(f"Inizializzazione del puzzle con difficoltà: {difficulty}")
         image = self.puzzle_images[difficulty]
-        self.puzzle = PuzzleGame(image, rows, cols, click_sound=self.click_sound, win_sound=self.win_sounds[difficulty])
+        self.puzzle = PuzzleGame(image, rows, cols)
         self.start_time = time.time()  # Inizia il timer
         self.elapsed_time = 0
         self.game_started = True
@@ -222,56 +209,48 @@ class Puzzle:
             self.screen.blit(best_time_text_rendered, (10, 40))
 
     def update_elapsed_time(self):
-        if self.game_started:
+        if self.game_started and self.start_time:
             self.elapsed_time = time.time() - self.start_time
 
-    def handle_events(self, event):
-        if not self.game_started:
-            if self.start_button.click(event):
-                self.initialize_puzzle("easy", 3, 3)  # Imposta la difficoltà iniziale
-            elif self.easy_button.click(event):
-                self.initialize_puzzle("easy", 3, 3)
-            elif self.medium_button.click(event):
-                self.initialize_puzzle("medium", 4, 4)
-            elif self.hard_button.click(event):
-                self.initialize_puzzle("hard", 5, 5)
-            elif self.exit_button.click(event):
-                pygame.quit()
-                sys.exit()
-        else:
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                self.puzzle.handle_click(pos)
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if not self.game_started:
+                if self.start_button.click(event):
+                    print("Pulsante Start cliccato")
+                    self.initialize_puzzle("easy", 3, 3)  # Inizia con la difficoltà facile per esempio
+            else:
+                self.puzzle.handle_click(event.pos)
                 if self.puzzle.check_win():
-                    self.record_manager.save_record(self.elapsed_time, self.user, self.difficulty)  # Salva il record
-                    self.update_best_time_text()
+                    print("Puzzle completato!")
+                    self.game_started = False
 
-# Funzione principale per eseguire il gioco
+# Funzione principale di esecuzione del gioco
 def main():
     pygame.init()
-    pygame.font.init()
-    pygame.mixer.init()
-
     screen = pygame.display.set_mode((700, 700))
-    pygame.display.set_caption("Puzzle Game")
-
     font = pygame.font.Font(None, 36)
     clock = pygame.time.Clock()
 
-    # Richiedi il nome utente
-    user = input("Inserisci il tuo nome utente: ")
-    puzzle = Puzzle(screen, font, clock, user)
+    # Nome dell'utente (puoi personalizzarlo)
+    user = "giocatore1"
 
-    while True:
+    # Crea un'istanza di Puzzle
+    puzzle_game = Puzzle(screen, font, clock, user)
+
+    # Ciclo principale del gioco
+    running = True
+    while running:
         for event in pygame.event.get():
-            puzzle.handle_events(event)
+            if event.type == pygame.QUIT:
+                running = False
+            puzzle_game.handle_event(event)
 
-        puzzle.draw()
+        puzzle_game.draw()
+
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(30)
+
+    pygame.quit()
 
 if __name__ == "__main__":
     main()

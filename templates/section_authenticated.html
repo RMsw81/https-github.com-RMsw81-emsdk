@@ -5,14 +5,15 @@
 <div class="masthead-content" id="dynamic-section">
     {% block content %}
     {% endblock %}
+
     <!-- Content section 1 -->
     <section id="page-top">
         <div class="container-sm" id="masthead"><br><br>
             <div class="row gx-5 align-items-center">
                 <div class="col-lg-6 order-lg-2">
                     <div class="p-5">
-                        <a href="#" id="puzzle-game-btn">
-                            <img class="img-fluid rounded-circle" src="static/assets/img/01.jpg" alt="Puzzle Game" />
+                        <a href="/start_p" id="" >
+                            <img class="img-fluid rounded-circle" src="static/assets/img/01.jpg" alt="Puzzle Game" onclick="startGame()"/>
                         </a>
                     </div>
                 </div>
@@ -25,6 +26,7 @@
             </div>
         </div>
     </section>
+
     <!-- Content section 2 -->
     <section>
         <div class="container-sm" id="masthead">
@@ -32,13 +34,13 @@
                 <div class="col-lg-6">
                     <div class="p-5">
                         <a href="#" id="load-m-btn">
-                            <img class="img-fluid rounded-circle" src="static/assets/img/02.jpg" alt="Download Memory Game" />
+                            <img class="img-fluid rounded-circle" src="static/assets/img/02.jpg" alt="Download Memory Game" onclick="startMemory()" />
                         </a>
-                    </div> <!-- onclick="startMemory()" -->
+                    </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="p-5">
-                        <h2 class="display-4">Memory game</h2>
+                        <h2 class="display-4">Memory Game</h2>
                         <p>Metti a dura prova la tua memoria e trova le coppie di carte nel minor tempo possibile!!</p>
                     </div>
                 </div>
@@ -50,27 +52,32 @@
 <script src="static/js/scripts.js"></script>
 <script>
     function startGame() {
-        fetch('/start_game', {
-            method: 'POST',
+        fetch('/start_p', {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         })
         .then(response => {
             if (response.ok) {
-                return response.json();
+                return response.text(); // Ottieni il file HTML come testo
             }
-            throw new Error('Errore avviando il gioco');
+            throw new Error('Errore nell\'avvio del gioco');
         })
-        .then(data => {
-            console.log(data.status);
-            // Puoi gestire qui la risposta positiva, es. mostrare un messaggio all'utente
+        .then(html => {
+            // Mostra il contenuto HTML ricevuto
+            const gameWindow = window.open(); // Apri una nuova finestra o scheda
+            gameWindow.document.write(html); // Scrivi il contenuto HTML
+            gameWindow.document.close(); // Chiudi il documento per renderizzare il contenuto
         })
         .catch(error => {
             console.error('Errore:', error);
-            // Gestire errori qui
+            alert('Si è verificato un errore durante l\'avvio del gioco. Per favore riprova.');
         });
     }
-</script>
 
-<button onclick="startGame()">Avvia Gioco</button>
+    function startMemory() {
+        // Implementa qui la logica per avviare il Memory Game
+        alert('Funzionalità non implementata!'); // Placeholder
+    }
+</script>

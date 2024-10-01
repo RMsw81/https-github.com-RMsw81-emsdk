@@ -1,8 +1,9 @@
-import pygame  # type: ignore
+import pygame
 import random
 import time
 import datetime
 import sys
+import getpass  # Importa il modulo getpass
 
 # Classe per gestire i record
 class RecordManager:
@@ -10,7 +11,6 @@ class RecordManager:
         self.records = {}
 
     def save_record(self, time, user, difficulty):
-        # Salva il record solo se il nuovo tempo è migliore
         best_record = self.load_best_record(user, difficulty)
         if not best_record or time < best_record['time']:
             self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now()}
@@ -232,8 +232,7 @@ def main():
     font = pygame.font.Font(None, 36)
     clock = pygame.time.Clock()
 
-    # Nome dell'utente (puoi personalizzarlo)
-    user = "giocatore1"
+    user = getpass.getuser()  # Acquisisce il nome dell'utente dal sistema
 
     # Crea un'istanza di Puzzle
     puzzle_game = Puzzle(screen, font, clock, user)

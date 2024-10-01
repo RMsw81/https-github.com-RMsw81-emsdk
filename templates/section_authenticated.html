@@ -49,19 +49,28 @@
 
 <script src="static/js/scripts.js"></script>
 <script>
-    function start_p() {
-        $.ajax({
-            type: 'GET',
-            url: '/start_p',
-            success: function(response) {
-                console.log('Gioco avviato con successo:', response);
-                // Carica il gioco all'interno di un div specifico
-                $('#dynamic-section').html(response);  // Assicurati che la risposta contenga l'HTML del gioco
-            },
-            error: function(error) {
-                console.error('Errore durante l\'avvio del gioco:', error);
-                alert("Errore durante l'avvio del gioco");
+    function startGame() {
+        fetch('/start_game', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Errore avviando il gioco');
+        })
+        .then(data => {
+            console.log(data.status);
+            // Puoi gestire qui la risposta positiva, es. mostrare un messaggio all'utente
+        })
+        .catch(error => {
+            console.error('Errore:', error);
+            // Gestire errori qui
         });
     }
 </script>
+
+<button onclick="startGame()">Avvia Gioco</button>

@@ -120,16 +120,15 @@ def serve_game_assets(filename):
 @login_required
 def start_game():
     try:
-        game_script = 'puzzle.py'
+        # Specifica il percorso del file main.py
+        game_script = 'p/main.py'
+        
         if not os.path.isfile(game_script):
             return jsonify({'error': f'Script {game_script} non trovato'}), 404
 
-        result = subprocess.Popen(['python3', game_script, current_user.username], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = result.communicate()
-
-        if result.returncode != 0:
-            return jsonify({'error': stderr.decode('utf-8')}), 500
-
+        # Avvia il gioco come un processo separato
+        result = subprocess.Popen(['python3', game_script], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
         return jsonify({'status': 'Gioco avviato'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500

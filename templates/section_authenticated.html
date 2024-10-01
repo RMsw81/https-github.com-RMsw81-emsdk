@@ -55,8 +55,8 @@
             url: '/start_p',
             success: function(response) {
                 console.log('Gioco avviato con successo:', response);
-                // Ridirigi l'utente alla pagina del gioco
-                window.location.href = '/start_p';  // Questo caricherà il gioco generato
+                // Carica il gioco all'interno di un div specifico
+                $('#dynamic-section').html(response);  // Assicurati che la risposta contenga l'HTML del gioco
             },
             error: function(error) {
                 console.error('Errore durante l\'avvio del gioco:', error);
@@ -64,16 +64,4 @@
             }
         });
     }
-
-    // Associa l'evento click al pulsante del gioco
-    $('#puzzle-game-btn').click(function(e) {
-        e.preventDefault(); // Previene il comportamento predefinito del link
-        start_p(); // Chiama la funzione per avviare il gioco
-    });
-
-    // Esempio di codice per il Memory Game (da implementare)
-    $('#load-m-btn').click(function(e) {
-        e.preventDefault();
-        downM(); // Se hai una funzione specifica per il memory game
-    });
 </script>

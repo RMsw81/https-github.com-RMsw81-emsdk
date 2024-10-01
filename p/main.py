@@ -222,6 +222,7 @@ class Puzzle:
                 self.puzzle.handle_click(event.pos)
                 if self.puzzle.check_win():
                     print("Puzzle completato!")
+                    self.record_manager.save_record(self.elapsed_time, self.user, self.difficulty)  # Salva il record
                     self.game_started = False
 
 # Funzione principale di esecuzione del gioco

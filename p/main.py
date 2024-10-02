@@ -2,8 +2,11 @@ import pygame
 import random
 import time
 import datetime
-import sys
+import asyncio
 import getpass
+
+# Le variabili globali per facilitare l'esecuzione
+COUNT_DOWN = 3
 
 class RecordManager:
     def __init__(self):
@@ -142,7 +145,6 @@ class Puzzle:
         self.user = user
         self.difficulty = None
         self.game_started = False
-        self.win_animation = False
         self.alpha = 0
         self.best_time = None
         self.best_time_text = ""
@@ -220,7 +222,7 @@ class Puzzle:
                     self.record_manager.save_record(self.elapsed_time, self.user, self.difficulty)
                     self.game_started = False
 
-def main():
+async def main():
     pygame.init()
     screen = pygame.display.set_mode((700, 700))
     font = pygame.font.Font(None, 36)
@@ -241,9 +243,9 @@ def main():
         puzzle_game.draw()
 
         pygame.display.flip()
-        clock.tick(30)
+        await asyncio.sleep(1 / 30)  # Rende il ciclo compatibile con l'asincronia
 
     pygame.quit()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

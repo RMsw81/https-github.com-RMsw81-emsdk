@@ -4,11 +4,11 @@ import time
 import datetime
 import asyncio
 import getpass
-import mimetypes
+#import mimetypes
 from flask import Flask, send_from_directory
 
 # Aggiungi il MIME type per i file .wasm
-mimetypes.add_type('application/wasm', '.wasm')
+#mimetypes.add_type('application/wasm', '.wasm')
 
 # Configurazione dell'app Flask
 app = Flask(__name__)
@@ -16,7 +16,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Evita la cache per lo sviluppo
 
 @app.route('/<path:filename>')
 def send_file(filename):
-    return send_from_directory('static', filename)
+    return send_from_directory('p', filename)
 
 # Le variabili globali per facilitare l'esecuzione
 COUNT_DOWN = 3

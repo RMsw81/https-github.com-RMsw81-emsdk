@@ -6,6 +6,9 @@ import pymysql.cursors
 import subprocess
 import os
 import base64
+import mimetypes
+
+mimetypes.add_type('application/wasm', '.wasm')
 
 # Genera una chiave segreta casuale di 24 byte
 secret_key = base64.urlsafe_b64encode(os.urandom(24)).decode('utf-8')

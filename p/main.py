@@ -4,6 +4,9 @@ import time
 import datetime
 import asyncio
 import getpass
+import mimetypes
+
+mimetypes.add_type('application/wasm', '.wasm')
 
 # Le variabili globali per facilitare l'esecuzione
 COUNT_DOWN = 3

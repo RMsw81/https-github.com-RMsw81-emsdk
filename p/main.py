@@ -4,6 +4,7 @@ import time
 import datetime
 import asyncio
 import getpass
+import os
 from flask import Flask, send_from_directory
 
 # Configurazione dell'app Flask
@@ -251,16 +252,6 @@ async def main():
         pygame.display.flip()
         await asyncio.sleep(0)  # Rende il ciclo compatibile con l'asincronia
 
-    pygame.quit()
-
 if __name__ == "__main__":
-    # Avvia il server Flask in un thread separato
-    from threading import Thread
-
-    def run_flask():
-        app.run(port=5000)
-
-    flask_thread = Thread(target=run_flask)
-    flask_thread.start()
-
+    os.system("gunicorn -w 4 -b 0.0.0.0:5000 main:app")
     asyncio.run(main())

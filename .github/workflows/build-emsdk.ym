@@ -46,7 +46,7 @@ jobs:
     - name: Regen with latest cython (using system python3)
       run: |
         pip3 install cython==3.0.10
-        python3 setup.py cython_only
+        python3 p/main.py
 
     - name: Install python-wasm-sdk
       run: |

@@ -256,7 +256,7 @@ async def main():
         puzzle_game.draw()
 
         pygame.display.flip()
-        await asyncio.sleep(1 / 30)  # Rende il ciclo compatibile con l'asincronia
+        await asyncio.sleep(0)  # Rende il ciclo compatibile con l'asincronia
 
     pygame.quit()
 

@@ -58,7 +58,7 @@ jobs:
 
     - name: Build WASM with emsdk
       run: |
-        ${SDKROOT}/python3-wasm setup.py build -j$(nproc)
+        ${SDKROOT}/python3-wasm p/main.py build -j$(nproc)
 
     - name: Generate libpygame.a static binaries archive
       run: |

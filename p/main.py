@@ -4,11 +4,7 @@ import time
 import datetime
 import asyncio
 import getpass
-#import mimetypes
 from flask import Flask, send_from_directory
-
-# Aggiungi il MIME type per i file .wasm
-#mimetypes.add_type('application/wasm', '.wasm')
 
 # Configurazione dell'app Flask
 app = Flask(__name__)
@@ -29,7 +25,7 @@ class RecordManager:
         best_record = self.load_best_record(user, difficulty)
         if not best_record or time < best_record['time']:
             self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now()}
-            print(f"Record salvato per {user} in difficoltà {difficulty}: {time}s")
+            print(f"Record salvato per {user} in difficoltà {difficulty}: {time:.2f}s")
 
     def load_best_record(self, user, difficulty):
         return self.records.get((user, difficulty))
@@ -39,7 +35,7 @@ def load_image(path):
         return pygame.image.load(path)
     except pygame.error as e:
         print(f"Impossibile caricare l'immagine da {path}: {e}")
-        sys.exit()
+        exit()  # Cambiato sys.exit() in exit() per una maggiore chiarezza
 
 class Button:
     def __init__(self, image, position):
@@ -50,9 +46,8 @@ class Button:
         screen.blit(self.image, self.rect.topleft)
 
     def click(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                return True
+        if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
+            return True
         return False
 
 class PuzzleGame:
@@ -109,10 +104,8 @@ class PuzzleGame:
         x = (position[0] - self.offset_x) // piece_width
         y = (position[1] - self.offset_y) // piece_height
 
-        if x < 0 or x >= self.cols or y < 0 or y >= self.rows:
-            return
-
-        if (x, y) == self.empty_pos:
+        if (x < 0 or x >= self.cols or y < 0 or y >= self.rows or
+                (x, y) == self.empty_pos):
             return
 
         if self.is_adjacent((x, y), self.empty_pos):
@@ -185,9 +178,9 @@ class Puzzle:
         if self.difficulty:
             self.best_time = self.record_manager.load_best_record(self.user, self.difficulty)
             if self.best_time:
-                self.best_time_text = f"Tempo: {self.elapsed_time} s Miglior record: {self.best_time['time']} s Utente: {self.user}"
+                self.best_time_text = f"Tempo: {self.elapsed_time:.2f} s Miglior record: {self.best_time['time']} s Utente: {self.user}"
             else:
-                self.best_time_text = f"Tempo: {self.elapsed_time} s Nessun record precedente"
+                self.best_time_text = f"Tempo: {self.elapsed_time:.2f} s Nessun record precedente"
 
     def initialize_puzzle(self, difficulty, rows, cols):
         print(f"Inizializzazione del puzzle con difficoltà: {difficulty}")

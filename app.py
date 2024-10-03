@@ -8,6 +8,7 @@ import os
 import base64
 import mimetypes
 
+# Aggiungi il MIME type per i file .wasm
 mimetypes.add_type('application/wasm', '.wasm')
 
 # Genera una chiave segreta casuale di 24 byte
@@ -37,6 +38,7 @@ def get_db_connection():
     except pymysql.MySQLError as e:
         print(f"Errore nella connessione al database: {e}")
         return None
+
 # Inizializza Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -237,5 +239,12 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+# Nuova route per servire i file .wasm
+@app.route('/<path:filename>')
+@login_required
+def serve_file(filename):
+    return send_from_directory('p/build/web', filename)
+
 if __name__ == '__main__':
     app.run(debug=True)
+

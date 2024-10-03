@@ -125,23 +125,7 @@ def serve_game_assets(filename):
     return send_from_directory(assets_directory, filename)
 
 
-@app.route('/start_memory', methods=['POST'])
-@login_required
-def start_memory():
-    try:
-        game_script = 'memory.py'
-        if not os.path.isfile(game_script):
-            return jsonify({'error': f'Script {game_script} non trovato'}), 404
 
-        result = subprocess.Popen(['python3', game_script, current_user.username], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = result.communicate()
-
-        if result.returncode != 0:
-            return jsonify({'error': stderr.decode('utf-8')}), 500
-
-        return jsonify({'status': 'Memory game avviato'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 def validate_password(password):
     """Verifica se la password soddisfa i criteri richiesti."""

@@ -5,8 +5,18 @@ import datetime
 import asyncio
 import getpass
 import mimetypes
+from flask import Flask, send_from_directory
 
+# Aggiungi il MIME type per i file .wasm
 mimetypes.add_type('application/wasm', '.wasm')
+
+# Configurazione dell'app Flask
+app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Evita la cache per lo sviluppo
+
+@app.route('/<path:filename>')
+def send_file(filename):
+    return send_from_directory('static', filename)
 
 # Le variabili globali per facilitare l'esecuzione
 COUNT_DOWN = 3
@@ -251,4 +261,13 @@ async def main():
     pygame.quit()
 
 if __name__ == "__main__":
+    # Avvia il server Flask in un thread separato
+    from threading import Thread
+
+    def run_flask():
+        app.run(port=5000)
+
+    flask_thread = Thread(target=run_flask)
+    flask_thread.start()
+
     asyncio.run(main())

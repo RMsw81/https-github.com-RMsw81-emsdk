@@ -39,10 +39,10 @@ jobs:
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."
-          pygbag p/main.py -o build/game.wasm -j$(nproc)
+          pygbag /home/RobertaMerlo/My_Games/p/main.py -o build/game.wasm -j$(nproc)
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: wasm-artifacts
-          path: build/game.wasm
+          path: /home/RobertaMerlo/My_Games/p/build/game.wasm

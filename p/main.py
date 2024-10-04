@@ -41,6 +41,7 @@ class RecordManager:
         return {}
 
     def save_record(self, time, user, difficulty):
+        """Salva il record se è migliore di quello esistente."""
         best_record = self.load_best_record(user, difficulty)
         if not best_record or time < best_record['time']:
             self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now().isoformat()}
@@ -51,13 +52,15 @@ class RecordManager:
         return self.records.get((user, difficulty))
 
 def load_image(path):
+    """Carica l'immagine dal percorso specificato."""
     try:
         return pygame.image.load(path)
     except pygame.error as e:
         print(f"Impossibile caricare l'immagine da {path}: {e}")
-        exit()  # Cambiato sys.exit() in exit() per una maggiore chiarezza
+        exit()
 
 class Button:
+    """Classe per gestire i bottoni nel gioco."""
     def __init__(self, image, position):
         self.image = image
         self.rect = self.image.get_rect(topleft=position)
@@ -71,6 +74,7 @@ class Button:
         return False
 
 class PuzzleGame:
+    """Classe principale per il gioco del puzzle."""
     def __init__(self, image, rows, cols, offset_x=150, offset_y=104):
         self.image = image
         self.rows = rows
@@ -164,11 +168,12 @@ class PuzzleGame:
             return (inversions + empty_row_from_bottom) % 2 == 1
 
 class Puzzle:
+    """Classe per gestire il puzzle e l'interfaccia utente."""
     def __init__(self, screen, font, clock, user):
         self.screen = screen
         self.font = font
         self.clock = clock
-        self.user = user
+        self.user = user  # Nome utente loggato
         self.difficulty = None
         self.game_started = False
         self.alpha = 0
@@ -180,6 +185,7 @@ class Puzzle:
         self.load_assets()
 
     def load_assets(self):
+        """Carica le risorse grafiche del gioco."""
         self.background_image = pygame.transform.scale(load_image("assets/games/background.jpg"), (700, 700))
         self.puzzle_images = {
             "easy": pygame.transform.scale(load_image("assets/games/puzzle_image_easy.jpg"), (400, 400)),
@@ -195,6 +201,7 @@ class Puzzle:
         self.back_button = Button(pygame.transform.scale(load_image("assets/games/back_button.png"), (50, 40)), (130, 570))
 
     def update_best_time_text(self):
+        """Aggiorna il testo che mostra il miglior tempo registrato."""
         if self.difficulty:
             self.best_time = self.record_manager.load_best_record(self.user, self.difficulty)
             if self.best_time:
@@ -205,6 +212,7 @@ class Puzzle:
             self.best_time_text = ""
 
     def run(self):
+        """Avvia il ciclo principale del gioco."""
         while True:
             self.screen.blit(self.background_image, (0, 0))
             self.screen.blit(self.font.render(self.best_time_text, True, (255, 255, 255)), (50, 50))  # Mostra il miglior tempo
@@ -221,6 +229,7 @@ class Puzzle:
             pygame.display.flip()
 
     def difficulty_selection(self):
+        """Gestisce la selezione della difficoltà."""
         while not self.game_started:
             self.screen.blit(self.background_image, (0, 0))
             self.easy_button.draw(self.screen)
@@ -249,6 +258,7 @@ class Puzzle:
             pygame.display.flip()
 
     def start_game(self, difficulty):
+        """Inizia il gioco con la difficoltà selezionata."""
         self.difficulty = difficulty
         self.elapsed_time = 0
         self.start_time = time.time()
@@ -280,12 +290,14 @@ class Puzzle:
             self.clock.tick(30)
 
     def check_win(self, puzzle):
+        """Controlla se l'utente ha vinto."""
         if puzzle.check_win():
             self.game_started = False
             return True
         return False
 
     def end_game(self):
+        """Gestisce la fine del gioco e il salvataggio dei record."""
         # Salva il record se esiste un nuovo miglior tempo
         self.record_manager.save_record(self.elapsed_time, self.user, self.difficulty)
 
@@ -297,6 +309,7 @@ class Puzzle:
         self.difficulty_selection()
 
 async def main():
+    """Funzione principale per avviare il gioco."""
     pygame.init()
     pygame.display.set_caption("Puzzle Game")
     screen = pygame.display.set_mode((700, 700))

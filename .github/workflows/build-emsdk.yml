@@ -1,7 +1,5 @@
 name: Build WASM (Emscripten)
 
-# Run CI only on changes to main branch, or any PR to main. Do not run CI on
-# any other branch. Also, skip any non-source changes from running on CI
 on:
   push:
     branches: main
@@ -12,7 +10,6 @@ on:
       - '*.rst'
       - '*.md'
       - '.github/workflows/*.yml'
-      # re-include current file to not be excluded
       - '!.github/workflows/build-emsdk.yml'
 
   pull_request:
@@ -24,7 +21,6 @@ on:
       - '*.rst'
       - '*.md'
       - '.github/workflows/*.yml'
-      # re-include current file to not be excluded
       - '!.github/workflows/build-emsdk.yml'
 
 concurrency:
@@ -35,7 +31,6 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     env:
-      # pin SDK version to the latest, update manually
       SDK_VERSION: 3.1.32.0
       SDK_ARCHIVE: python3.11-wasm-sdk-Ubuntu-22.04.tar.lz4
       SDKROOT: /opt/python-wasm-sdk
@@ -64,12 +59,14 @@ jobs:
         echo "Downloading SDK from https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE"
         curl -sL --retry 5 -o ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE
         tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4
-        # do not let SDL1 interfere
+        echo "Contenuto di ${SDKROOT}:"
+        ls -l ${SDKROOT}
         rm -rf /opt/python-wasm-sdk/emsdk/upstream/emscripten/cache/sysroot/include/SDL
 
     - name: Build WASM with emsdk
       run: |
         if [ -f "${SDKROOT}/python3-wasm" ]; then
+            chmod +x ${SDKROOT}/python3-wasm  # Assicurati che il file sia eseguibile
             ${SDKROOT}/python3-wasm p/main.py build -j$(nproc)
         else
             echo "Il file python3-wasm non esiste in ${SDKROOT}"
@@ -85,7 +82,6 @@ jobs:
       run: |
         rm -rf ${{ github.workspace }}/sdk_downloads
 
-    # Upload the generated files under github actions assets section
     - name: Upload dist
       uses: actions/upload-artifact@v4
       with:

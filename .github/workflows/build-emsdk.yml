@@ -29,15 +29,18 @@ jobs:
           git clone https://github.com/emscripten-core/emsdk.git
 
       - name: List directory contents
-        run: ls -R  # Elenca il contenuto della directory
+        run: ls -R  # Elenca il contenuto della directory per verificare il percorso
 
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."
-          pygbag p/main.py -o build/game.wasm
+          pygbag p/main.py  # Non serve l'opzione -o
+
+      - name: List build/web contents
+        run: ls -R build/web  # Verifica i file generati nella directory build/web
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: wasm-artifacts
-          path: build/game.wasm
+          path: build/web/  # Carica i file dalla directory build/web, dove sono stati generati

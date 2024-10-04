@@ -1,0 +1,14 @@
+# Ignora la cartella __pycache__ e i file bytecode Python
+__pycache__/
+*.pyc
+
+# Ignora i file di ambiente virtuale
+venv/
+env/
+
+# Ignora i file di log
+*.log
+
+# Ignora i file di configurazione dell'IDE
+.idea/
+.vscode/

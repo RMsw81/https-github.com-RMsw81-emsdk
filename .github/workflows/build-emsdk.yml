@@ -73,6 +73,11 @@ jobs:
             exit 1
         fi
 
+    - name: Check contents of build directory
+      run: |
+        echo "Contenuto della directory di build:"
+        ls -R build/
+
     - name: Generate libpygame.a static binaries archive
       run: |
         mkdir -p dist

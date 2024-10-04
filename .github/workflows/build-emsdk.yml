@@ -61,13 +61,13 @@ jobs:
         tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4
         echo "Contenuto di ${SDKROOT}:"
         ls -l ${SDKROOT}
-        rm -rf /opt/python-wasm-sdk/emsdk/upstream/emscripten/cache/sysroot/include/SDL
 
     - name: Build WASM with emsdk
       run: |
         if [ -f "${SDKROOT}/python3-wasm" ]; then
             chmod +x ${SDKROOT}/python3-wasm  # Assicurati che il file sia eseguibile
-            ${SDKROOT}/python3-wasm p/main.py build -j$(nproc)
+            echo "Avviando la build WASM..."
+            ${SDKROOT}/python3-wasm p/main.py build -j$(nproc) -v || { echo "Build failed"; exit 1; }
         else
             echo "Il file python3-wasm non esiste in ${SDKROOT}"
             exit 1

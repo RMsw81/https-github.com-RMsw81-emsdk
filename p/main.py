@@ -3,7 +3,6 @@ import random
 import time
 import datetime
 import asyncio
-import getpass
 import os
 import platform
 import sys
@@ -316,8 +315,8 @@ async def main():
     font = pygame.font.Font(None, 36)
     clock = pygame.time.Clock()
 
-    # Acquisisci il nome utente loggato
-    user = getpass.getuser()  # Ottieni il nome utente loggato
+    # Usa un nome utente predefinito per il test
+    user = "Player"  # Ottieni il nome utente loggato
     puzzle = Puzzle(screen, font, clock, user)
     puzzle.run()
 

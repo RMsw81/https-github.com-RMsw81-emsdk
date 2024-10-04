@@ -35,10 +35,11 @@ jobs:
         run: |
           set -x  # Abilita il logging dettagliato
           echo "Starting the game build..."
-          pygbag p/main.py || echo "Build failed"  # Stampa messaggio in caso di errore
+          pygbag p/main.py > pygbag_log.txt 2>&1 || echo "Build failed"
+          cat pygbag_log.txt  # Mostra l'intero log di Pygbag
 
       - name: List directory contents after build
-        run: ls -R build || echo "Directory build does not exist"  # Verifica se la directory build è stata creata
+        run: ls -R build || echo "Directory build does not exist"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

@@ -239,7 +239,7 @@ class Puzzle:
                 self.elapsed_time = time.time() - self.start_time
 
             self.draw()
-            pygame.display.flip()
+            pygame.display.flip(60)  # Aggiunto per limitare a 60 FPS
             await asyncio.sleep(0)  # Rende il ciclo compatibile con async
 
 if __name__ == "__main__":

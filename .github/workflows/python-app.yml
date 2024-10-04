@@ -49,32 +49,13 @@ jobs:
         echo "Building the game with pygbag..."
         pygbag p/main.py
 
-    - name: List generated files
-      run: |
-        echo "Listing generated files in the build/web/ directory:"
-        ls -la p/build/web/
-
     - name: Lint with flake8
       run: |
         echo "Running flake8 linter..."
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Deploy to PythonAnywhere
-      env:
-        PA_USERNAME: ${{ secrets.PA_USERNAME }}
-        PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
-      run: |
-        echo "Deploying to PythonAnywhere..."
-        
-        # Step into the build directory
-        cd p/build/web
-        
-        # Use curl to upload files directly
-        for file in *; do
-          echo "Uploading $file..."
-          curl -s -F "file=@$file" "https://www.pythonanywhere.com/api/v0/user/$PA_USERNAME/files/$file" \
-            -H "Authorization: Token $PA_API_TOKEN"
+    
         done
 
         # Restart your web app if needed

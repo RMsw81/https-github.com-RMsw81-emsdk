@@ -34,11 +34,13 @@ jobs:
       - name: List directory contents
         run: ls -R  # Elenca il contenuto della directory
 
-      - name: Set CI environment variable
-        run: echo "CI=true" >> $GITHUB_ENV
-             echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
-             echo "BUILD_ENV=production" >> $GITHUB_ENV
-             echo "DEBUG=true" >> $GITHUB_ENV
+      - name: Set environment variables
+        run: |
+          echo "CI=true" >> $GITHUB_ENV
+          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+          echo "BUILD_ENV=production" >> $GITHUB_ENV
+          echo "DEBUG=true" >> $GITHUB_ENV
+
 
       - name: Build WASM Game
         run: |

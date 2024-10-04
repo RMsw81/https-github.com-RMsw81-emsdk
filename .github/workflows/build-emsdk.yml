@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4  # Check out the repository code
 
       - name: Set up Python environment
-        uses: actions/setup-python@v4  # Set up Python
+        uses: actions/setup-python@v5  # Set up Python
         with:
           python-version: '3.10'  # Specify the required Python version
 
@@ -33,13 +33,23 @@ jobs:
           echo "Making main.py executable..."
           chmod +x p/main.py  # Modify the path if necessary
 
+      - name: Check if main.py runs without errors
+        run: |
+          echo "Checking if main.py runs without errors..."
+          python p/main.py  # Test if main.py can be executed without errors
+
+      - name: Create build directory
+        run: |
+          echo "Creating build directory..."
+          mkdir -p build  # Create build directory if it doesn't exist
+
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."
-          pygbag p/main.py -o output/game.wasm -j$(nproc)  # Compile using pygbag
+          pygbag p/main.py -o build/game.wasm -j$(nproc)  # Compile using pygbag
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4  # Upload the build artifacts
         with:
           name: wasm-artifacts
-          path: output/game.wasm  # Specify the output path for the WASM file
+          path: build/game.wasm  # Specify the output path for the WASM file

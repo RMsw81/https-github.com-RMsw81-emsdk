@@ -59,11 +59,6 @@ jobs:
         tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4 || { echo "Extraction failed"; exit 1; }
         echo "Extraction complete."
 
-    - name: List extracted files
-      run: |
-        echo "Contenuto di /opt/python-wasm-sdk:"
-        ls -R /opt/python-wasm-sdk || { echo "Listing failed"; exit 1; }
-
     - name: Check for python3-wasm directory
       run: |
         if [ -d "/opt/python-wasm-sdk/python3-wasm" ]; then
@@ -84,7 +79,7 @@ jobs:
         echo "Rendere main.py eseguibile..."
         chmod +x /opt/python-wasm-sdk/python3-wasm/p/main.py
         echo "Avviando la build..."
-        ./dev-wasm-python/python3-wasm p/main.py build -j$(nproc) || { echo "Build failed"; exit 1; }
+        ./dev-wasm-python/python3-wasm/p/main.py build -j$(nproc) || { echo "Build failed"; exit 1; }
 
     - name: Clean up
       run: |

@@ -1,94 +1,44 @@
-name: Build WASM (Emscripten)
+name: Build WASM Game with emsdk
 
 on:
   push:
-    branches: main
-    paths-ignore:
-      - 'docs/**'
-      - 'examples/**'
-      - '.gitignore'
-      - '*.rst'
-      - '*.md'
-      - '.github/workflows/*.yml'
-      - '!.github/workflows/build-emsdk.yml'
-
+    branches:
+      - main  # Cambia se necessario
   pull_request:
-    branches: main
-    paths-ignore:
-      - 'docs/**'
-      - 'examples/**'
-      - '.gitignore'
-      - '*.rst'
-      - '*.md'
-      - '.github/workflows/*.yml'
-      - '!.github/workflows/build-emsdk.yml'
+    branches:
+      - main  # Cambia se necessario
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
-    env:
-      SDK_VERSION: 3.1.32.0
-      SDK_ARCHIVE: python3.11-wasm-sdk-Ubuntu-22.04.tar.lz4
-      SDKROOT: /opt/python-wasm-sdk
+    runs-on: ubuntu-latest  # Usa l'ultima versione di Ubuntu
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4.2.0
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y lz4 git
-        pip3 install cython==3.0.10 pygame pygbag flask gunicorn
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'  # Specifica la versione di Python necessaria
 
-    - name: Clone dev-wasm-python repository
-      run: |
-        git clone https://github.com/dev-wasm/dev-wasm-python
-        echo "Dev WASM Python repository clonato."
+      - name: Install dependencies
+        run: |
+          echo "Installing required dependencies..."
+          pip install -r requirements.txt  # Assicurati di avere un requirements.txt se necessario
+          pip install pygbag  # Installa pygbag per la compilazione in WASM
 
-    - name: Create download directory
-      run: |
-        mkdir -p ${{ github.workspace }}/sdk_downloads
-        echo "Download directory created."
+      - name: Make main.py executable
+        run: |
+          echo "Rendere main.py eseguibile..."
+          chmod +x p/main.py  # Modifica il percorso se necessario
 
-    - name: Install python-wasm-sdk
-      run: |
-        echo "Downloading SDK..."
-        curl -sL --retry 5 -o ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE
-        echo "Extracting SDK..."
-        tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4 || { echo "Extraction failed"; exit 1; }
-        echo "Extraction complete."
+      - name: Build WASM Game
+        run: |
+          echo "Avviando la build del gioco..."
+          pygbag p/main.py -o output/game.wasm -j$(nproc)  # Compila usando pygbag
 
-    - name: Check for python3-wasm directory
-      run: |
-        if [ -d "/opt/python-wasm-sdk/python3-wasm" ]; then
-            echo "Trovata la directory python3-wasm."
-            if [ -f "/opt/python-wasm-sdk/python3-wasm/p/main.py" ]; then
-                echo "Trovato main.py, avvio della build..."
-            else
-                echo "main.py non trovato in /opt/python-wasm-sdk/python3-wasm/p."
-                exit 1
-            fi
-        else
-            echo "La directory python3-wasm non esiste in /opt/python-wasm-sdk."
-            exit 1
-        fi
-
-    - name: Build WASM with emsdk
-      run: |
-        echo "Rendere main.py eseguibile..."
-        chmod +x /opt/python-wasm-sdk/python3-wasm/p/main.py
-        echo "Avviando la build..."
-        ./dev-wasm-python/python3-wasm/p/main.py build -j$(nproc) || { echo "Build failed"; exit 1; }
-
-    - name: Clean up
-      run: |
-        echo "Pulizia dei file scaricati..."
-        rm -rf ${{ github.workspace }}/sdk_downloads
-        echo "Pulizia completata."
-
-    - name: Upload dist
-      uses: actions/upload-artifact@v4
-      with:
-        name: pygame-wasm-dist
-        path: ./dist/*
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: wasm-artifacts
+          path: output/game.wasm  # Modifica in base al tuo output specifico

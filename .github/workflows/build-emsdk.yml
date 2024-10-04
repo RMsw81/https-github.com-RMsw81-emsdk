@@ -59,24 +59,24 @@ jobs:
         echo "Downloading SDK from https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE"
         curl -sL --retry 5 -o ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE
         tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4
-        echo "Contenuto di ${SDKROOT}:"
-        ls -l ${SDKROOT}
+        echo "Contenuto di /opt dopo l'estrazione:"
+        ls -l /opt  # Verifica la directory principale /opt
 
     - name: Build WASM with emsdk
       run: |
-        if [ -f "${SDKROOT}/python3-wasm" ]; then
-            chmod +x ${SDKROOT}/python3-wasm  # Assicurati che il file sia eseguibile
+        if [ -f "/opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm" ]; then
+            chmod +x /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm  # Assicurati che il file sia eseguibile
             echo "Avviando la build WASM..."
-            ${SDKROOT}/python3-wasm p/main.py build -j$(nproc) -v || { echo "Build failed"; exit 1; }
+            /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm p/main.py build -j$(nproc) -v || { echo "Build failed"; exit 1; }
         else
-            echo "Il file python3-wasm non esiste in ${SDKROOT}"
+            echo "Il file python3-wasm non esiste in /opt/python-wasm-sdk/prebuilt/emsdk"
             exit 1
         fi
 
     - name: Generate libpygame.a static binaries archive
       run: |
         mkdir -p dist
-        SYS_PYTHON=python3 /opt/python-wasm-sdk/emsdk/upstream/emscripten/emar rcs dist/libpygame.a $(find build/temp.wasm32-*/ | grep o$)
+        SYS_PYTHON=python3 /opt/python-wasm-sdk/prebuilt/emsdk/emscripten/emar rcs dist/libpygame.a $(find build/temp.wasm32-*/ | grep o$)
 
     - name: Clean up after build
       run: |

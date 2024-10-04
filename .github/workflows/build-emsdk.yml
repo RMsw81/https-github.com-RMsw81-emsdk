@@ -41,42 +41,41 @@ jobs:
     - name: Check available disk space
       run: df -h
 
-    - name: Regen with latest cython (using system python3)
+    - name: Install dependencies
       run: |
         pip3 install cython==3.0.10
         pip3 install pygame
         pip3 install pygbag
         pip3 install flask
         pip3 install gunicorn
-        pygbag p/main.py
 
     - name: Create download directory
       run: mkdir -p ${{ github.workspace }}/sdk_downloads
 
     - name: Install python-wasm-sdk
       run: |
-        sudo apt-get install lz4
+        sudo apt-get install -y lz4
         echo "Downloading SDK from https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE"
         curl -sL --retry 5 -o ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE
         tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4
-        echo "Contenuto di /opt dopo l'estrazione:"
-        ls -R /opt  # Mostra tutto il contenuto di /opt ricorsivamente
+        echo "Contenuto di /opt/python-wasm-sdk dopo l'estrazione:"
+        ls -R /opt/python-wasm-sdk/prebuilt/emsdk  # Controlla solo il contenuto della directory specifica
+
+    - name: Search for python3-wasm
+      run: |
+        echo "Cercando il file python3-wasm all'interno di /opt/python-wasm-sdk..."
+        find /opt/python-wasm-sdk -name "python3-wasm"  # Cerca il file specifico
 
     - name: Build WASM with emsdk
       run: |
         if [ -f "/opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm" ]; then
-            chmod +x /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm  # Assicurati che il file sia eseguibile
-            echo "Avviando la build WASM..."
-            /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm p/main.py build -j$(nproc) -v || { echo "Build failed"; exit 1; }
+            chmod +x /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm  # Assicurati che sia eseguibile
+            echo "Trovato python3-wasm, avvio della build..."
+            /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm p/main.py build -j$(nproc) || { echo "Build failed"; exit 1; }
         else
             echo "Il file python3-wasm non esiste in /opt/python-wasm-sdk/prebuilt/emsdk"
             exit 1
         fi
-
-    - name: Check contents of build directory
-      run: |
-        echo "Contenuto della directory di build:"
-        ls -R build/
 
     - name: Generate libpygame.a static binaries archive
       run: |

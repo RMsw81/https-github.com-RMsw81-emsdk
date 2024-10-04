@@ -3,46 +3,49 @@ name: Build WASM Game with emsdk
 on:
   push:
     branches:
-      - main  # Trigger build on push to main branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger build on pull request to main branch
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Use the latest version of Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Check out the repository code
+        uses: actions/checkout@v4
 
       - name: Set up Python environment
-        uses: actions/setup-python@v5  # Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'  # Specify the required Python version
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
-          echo "Installing required dependencies..."
-          python -m pip install --upgrade pip  # Upgrade pip
-          pip install -r requirements.txt  # Install from requirements.txt
-          pip install pygbag  # Install pygbag for WASM compilation
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pygbag
 
       - name: Make main.py executable
-        run: |
-          echo "Making main.py executable..."
-          chmod +x p/main.py  # Modify the path if necessary
+        run: chmod +x p/main.py
+
+      - name: List directory contents
+        run: ls -R  # Elenca il contenuto della directory
 
       - name: Set CI environment variable
-        run: echo "CI=true" >> $GITHUB_ENV  # Set CI variable
+        run: echo "CI=true" >> $GITHUB_ENV
+
+      - name: Check if main.py runs without errors
+        run: python p/main.py
 
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."
-          pygbag p/main.py -o build/game.wasm -j$(nproc)  # Compile using pygbag
+          pygbag p/main.py -o build/game.wasm -j$(nproc)
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4  # Upload the build artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: wasm-artifacts
-          path: build/game.wasm  # Specify the output path for the WASM file
+          path: build/game.wasm

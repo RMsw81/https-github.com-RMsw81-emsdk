@@ -3,14 +3,14 @@ name: Build WASM Game with emsdk
 on:
   push:
     branches:
-      - main  # Cambia se necessario
+      - main  # Change if necessary
   pull_request:
     branches:
-      - main  # Cambia se necessario
+      - main  # Change if necessary
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Usa l'ultima versione di Ubuntu
+    runs-on: ubuntu-latest  # Use the latest Ubuntu version
 
     steps:
       - name: Checkout code
@@ -19,26 +19,26 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'  # Specifica la versione di Python necessaria
+          python-version: '3.9'  # Specify the required Python version
 
       - name: Install dependencies
         run: |
           echo "Installing required dependencies..."
-          pip install -r requirements.txt  # Assicurati di avere un requirements.txt se necessario
-          pip install pygbag  # Installa pygbag per la compilazione in WASM
+          pip install -r requirements.txt  # Make sure you have a requirements.txt if needed
+          pip install pygbag  # Install pygbag for WASM compilation
 
       - name: Make main.py executable
         run: |
-          echo "Rendere main.py eseguibile..."
-          chmod +x p/main.py  # Modifica il percorso se necessario
+          echo "Making main.py executable..."
+          chmod +x p/main.py  # Modify the path if necessary
 
       - name: Build WASM Game
         run: |
-          echo "Avviando la build del gioco..."
-          pygbag p/main.py -o output/game.wasm -j$(nproc)  # Compila usando pygbag
+          echo "Starting the game build..."
+          pygbag p/main.py -o output/game.wasm -j$(nproc)  # Compile using pygbag
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4  # Update to the latest version (v4)
         with:
           name: wasm-artifacts
-          path: output/game.wasm  # Modifica in base al tuo output specifico
+          path: output/game.wasm  # Modify based on your specific output

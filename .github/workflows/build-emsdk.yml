@@ -57,17 +57,19 @@ jobs:
         sudo apt-get install -y lz4
         echo "Downloading SDK from https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE"
         curl -sL --retry 5 -o ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE
+        echo "Estraendo l'archivio..."
         tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4
         echo "Contenuto di /opt/python-wasm-sdk dopo l'estrazione:"
-        ls -R /opt/python-wasm-sdk/prebuilt/emsdk  # Controlla solo il contenuto della directory specifica
+        ls -R /opt/python-wasm-sdk  # Stampa il contenuto della directory
 
     - name: Search for python3-wasm
       run: |
         echo "Cercando il file python3-wasm all'interno di /opt/python-wasm-sdk..."
-        find /opt/python-wasm-sdk -name "python3-wasm"  # Cerca il file specifico
+        find /opt/python-wasm-sdk -name "python3-wasm" || { echo "Find command failed"; exit 1; }
 
     - name: Build WASM with emsdk
       run: |
+        echo "Controllando se il file python3-wasm esiste..."
         if [ -f "/opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm" ]; then
             chmod +x /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm  # Assicurati che sia eseguibile
             echo "Trovato python3-wasm, avvio della build..."
@@ -79,11 +81,13 @@ jobs:
 
     - name: Generate libpygame.a static binaries archive
       run: |
+        echo "Generando l'archivio statico libpygame.a..."
         mkdir -p dist
         SYS_PYTHON=python3 /opt/python-wasm-sdk/prebuilt/emsdk/emscripten/emar rcs dist/libpygame.a $(find build/temp.wasm32-*/ | grep o$)
 
     - name: Clean up after build
       run: |
+        echo "Pulizia dopo la build..."
         rm -rf ${{ github.workspace }}/sdk_downloads
 
     - name: Upload dist

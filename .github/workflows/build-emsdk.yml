@@ -33,6 +33,9 @@ jobs:
           echo "Making main.py executable..."
           chmod +x p/main.py  # Modify the path if necessary
 
+      - name: Set CI environment variable
+        run: echo "CI=true" >> $GITHUB_ENV  # Set CI variable
+
       - name: Check if main.py runs without errors
         run: |
           echo "Checking if main.py runs without errors..."

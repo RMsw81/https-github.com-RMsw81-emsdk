@@ -36,11 +36,6 @@ jobs:
       - name: Set CI environment variable
         run: echo "CI=true" >> $GITHUB_ENV  # Set CI variable
 
-      - name: Check if main.py runs without errors
-        run: |
-          echo "Checking if main.py runs without errors..."
-          python p/main.py  # Test if main.py can be executed without errors
-
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."

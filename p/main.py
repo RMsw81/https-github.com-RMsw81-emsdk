@@ -5,7 +5,17 @@ import datetime
 import asyncio
 import getpass
 import os
+import platform
+import sys
 from flask import Flask, send_from_directory
+
+# Controllo per la piattaforma Emscripten
+if sys.platform == "emscripten":
+    print("Running on Emscripten")
+
+# Controllo per la CPU WebAssembly
+if 'wasm' in platform.machine():
+    print("Running on WebAssembly")
 
 # Configurazione dell'app Flask
 app = Flask(__name__)
@@ -199,59 +209,55 @@ class Puzzle:
             self.easy_button.draw(self.screen)
             self.medium_button.draw(self.screen)
             self.hard_button.draw(self.screen)
-            self.exit_button.draw(self.screen)
         else:
             self.puzzle.draw(self.screen)
-            self.update_elapsed_time()
-            self.draw_texts()
 
-    def draw_texts(self):
-        elapsed_time_text = self.font.render(f"Tempo: {self.elapsed_time:.2f}s", True, (255, 255, 255))
-        self.screen.blit(elapsed_time_text, (10, 10))
-        if self.best_time_text:
-            best_time_text_rendered = self.font.render(self.best_time_text, True, (255, 255, 255))
-            self.screen.blit(best_time_text_rendered, (10, 40))
+    async def main(self):
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if not self.game_started:
+                        if self.start_button.click(event):
+                            # Gestisci il click del pulsante start
+                            pass
+                        elif self.easy_button.click(event):
+                            self.difficulty = "easy"
+                            self.initialize_puzzle("easy", 3, 3)
+                        elif self.medium_button.click(event):
+                            self.difficulty = "medium"
+                            self.initialize_puzzle("medium", 4, 4)
+                        elif self.hard_button.click(event):
+                            self.difficulty = "hard"
+                            self.initialize_puzzle("hard", 5, 5)
+                    else:
+                        self.puzzle.handle_click(event.pos)
 
-    def update_elapsed_time(self):
-        if self.game_started and self.start_time:
-            self.elapsed_time = time.time() - self.start_time
+            if self.game_started and self.start_time:
+                self.elapsed_time = time.time() - self.start_time
 
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if not self.game_started:
-                if self.start_button.click(event):
-                    print("Pulsante Start cliccato")
-                    self.initialize_puzzle("easy", 3, 3)
-            else:
-                self.puzzle.handle_click(event.pos)
-                if self.puzzle.check_win():
-                    print("Puzzle completato!")
-                    self.record_manager.save_record(self.elapsed_time, self.user, self.difficulty)
-                    self.game_started = False
+            self.draw()
+            pygame.display.flip()
+            await asyncio.sleep(0)  # Rende il ciclo compatibile con async
 
-async def main():
+if __name__ == "__main__":
     pygame.init()
+    pygame.display.set_caption("Puzzle Game")
+
+    # Setta le dimensioni della finestra del gioco
     screen = pygame.display.set_mode((700, 700))
+
+    # Definisci il font e l'orologio
     font = pygame.font.Font(None, 36)
     clock = pygame.time.Clock()
 
+    # Ottieni il nome dell'utente corrente
     user = getpass.getuser()
 
-    puzzle_game = Puzzle(screen, font, clock, user)
+    # Crea una nuova istanza di Puzzle
+    puzzle = Puzzle(screen, font, clock, user)
 
-    # Ciclo principale del gioco
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            puzzle_game.handle_event(event)
-
-        puzzle_game.draw()
-
-        pygame.display.flip()
-        await asyncio.sleep(0)  # Rende il ciclo compatibile con l'asincronia
-
-if __name__ == "__main__":
-    os.system("gunicorn -w 4 -b 0.0.0.0:5001 main:app")
-    asyncio.run(main())
+    # Esegui il gioco
+    asyncio.run(puzzle.main())

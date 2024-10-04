@@ -28,27 +28,16 @@ jobs:
           pip install pygbag
           git clone https://github.com/emscripten-core/emsdk.git
 
-      - name: Make main.py executable
-        run: chmod +x p/main.py
-
       - name: List directory contents
-        run: ls -R  # Elenca il contenuto della directory
-
-      - name: Set environment variables
-        run: |
-          echo "CI=true" >> $GITHUB_ENV
-          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
-          echo "BUILD_ENV=production" >> $GITHUB_ENV
-          echo "DEBUG=true" >> $GITHUB_ENV
-
+        run: ls -R  # Elenca il contenuto della directory per verificare il percorso
 
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."
-          pygbag /home/RobertaMerlo/My_Games/p/main.py -o build/game.wasm -j$(nproc)
+          pygbag p/main.py -o build/game.wasm
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: wasm-artifacts
-          path: /home/RobertaMerlo/My_Games/p/build/game.wasm
+          path: build/game.wasm

@@ -46,18 +46,33 @@ jobs:
         echo "Downloading SDK..."
         curl -sL --retry 5 -o ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE
         echo "Extracting SDK..."
-        tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4
+        tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4 || { echo "Extraction failed"; exit 1; }
+
+    - name: List extracted files
+      run: |
+        echo "Contenuto di /opt/python-wasm-sdk:"
+        ls -R /opt/python-wasm-sdk
+
+    - name: Check for python3-wasm directory
+      run: |
+        if [ -d "/opt/python-wasm-sdk/python3-wasm" ]; then
+            echo "Trovata la directory python3-wasm."
+            # Check for the executable file inside the directory
+            if [ -f "/opt/python-wasm-sdk/python3-wasm/p/main.py" ]; then
+                echo "Trovato main.py, avvio della build..."
+            else
+                echo "main.py non trovato in /opt/python-wasm-sdk/python3-wasm/p."
+                exit 1
+            fi
+        else
+            echo "La directory python3-wasm non esiste in /opt/python-wasm-sdk."
+            exit 1
+        fi
 
     - name: Build WASM with emsdk
       run: |
-        if [ -f "/opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm" ]; then
-            echo "Avviando la build WASM..."
-            chmod +x /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm
-            /opt/python-wasm-sdk/prebuilt/emsdk/python3-wasm p/main.py build -j$(nproc) || { echo "Build failed"; exit 1; }
-        else
-            echo "Il file python3-wasm non esiste."
-            exit 1
-        fi
+        chmod +x /opt/python-wasm-sdk/python3-wasm/p/main.py
+        /opt/python-wasm-sdk/python3-wasm/p/main.py build -j$(nproc) || { echo "Build failed"; exit 1; }
 
     - name: Clean up
       run: rm -rf ${{ github.workspace }}/sdk_downloads

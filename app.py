@@ -26,6 +26,7 @@ db_name = 'RobertaMerlo$db'
 # Crea la connessione al database
 def get_db_connection():
 
+
     try:
         return pymysql.connect(
             host=db_host,

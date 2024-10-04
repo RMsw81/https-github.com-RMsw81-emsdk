@@ -25,7 +25,7 @@ db_name = 'RobertaMerlo$db'
 
 # Crea la connessione al database
 def get_db_connection():
-    
+
     try:
         return pymysql.connect(
             host=db_host,
@@ -41,6 +41,7 @@ def get_db_connection():
 
 # Inizializza Flask-Login
 login_manager = LoginManager()
+
 
 login_manager.init_app(app)
 

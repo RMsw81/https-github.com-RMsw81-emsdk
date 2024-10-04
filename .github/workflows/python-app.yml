@@ -60,13 +60,23 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Start a local server to serve the game
+    - name: Deploy to PythonAnywhere
+      env:
+        PA_USERNAME: ${{ secrets.PA_USERNAME }}
+        PA_API_TOKEN: ${{ secrets.PA_API_TOKEN }}
       run: |
-        echo "Starting a simple HTTP server to serve the game..."
+        echo "Deploying to PythonAnywhere..."
+        
+        # Step into the build directory
         cd p/build/web
-        python3 -m http.server 8000 &
-        sleep 5  # Give the server some time to start
+        
+        # Use curl to upload files directly
+        for file in *; do
+          echo "Uploading $file..."
+          curl -s -F "file=@$file" "https://www.pythonanywhere.com/api/v0/user/$PA_USERNAME/files/$file" \
+            -H "Authorization: Token $PA_API_TOKEN"
+        done
 
-    - name: Open the game in the browser
-      run: |
-        echo "You can open the game in your browser at http://localhost:8000/index.html"
+        # Restart your web app if needed
+        curl -s -X POST "https://www.pythonanywhere.com/api/v0/user/$PA_USERNAME/webapps/your_web_app_name/reload/" \
+          -H "Authorization: Token $PA_API_TOKEN"

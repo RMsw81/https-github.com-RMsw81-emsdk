@@ -124,9 +124,6 @@ def serve_game_assets(filename):
     assets_directory = os.path.join(app.root_path, 'p/build/web/assets/games')
     return send_from_directory(assets_directory, filename)
 
-
-
-
 def validate_password(password):
     """Verifica se la password soddisfa i criteri richiesti."""
     if len(password) < 8:
@@ -228,8 +225,6 @@ def logout():
 @login_required
 def serve_file(filename):
     return send_from_directory('p/build/web', filename)
-    
+
 if __name__ == "__main__":
     os.system("gunicorn -w 4 -b 0.0.0.0:5001 app:app")
-    asyncio.run(main())
-

@@ -253,5 +253,5 @@ async def main():
         await asyncio.sleep(0)  # Rende il ciclo compatibile con l'asincronia
 
 if __name__ == "__main__":
-    os.system("gunicorn -w 4 -b 0.0.0.0:5000 main:app")
+    os.system("gunicorn -w 4 -b 0.0.0.0:5001 main:app")
     asyncio.run(main())

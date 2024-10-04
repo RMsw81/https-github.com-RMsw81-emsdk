@@ -29,7 +29,7 @@ jobs:
           git clone https://github.com/emscripten-core/emsdk.git
 
       - name: List directory contents
-        run: ls -R  # Elenca il contenuto della directory per verificare il percorso
+        run: ls -R  # Elenca il contenuto della directory
 
       - name: Build WASM Game
         run: |

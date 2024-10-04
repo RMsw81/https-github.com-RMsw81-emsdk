@@ -7,7 +7,6 @@ import getpass
 import os
 import platform
 import sys
-from flask import Flask, send_from_directory
 
 # Controllo per la piattaforma Emscripten
 if sys.platform == "emscripten":
@@ -16,14 +15,6 @@ if sys.platform == "emscripten":
 # Controllo per la CPU WebAssembly
 if 'wasm' in platform.machine():
     print("Running on WebAssembly")
-
-# Configurazione dell'app Flask
-app = Flask(__name__)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # Evita la cache per lo sviluppo
-
-@app.route('/<path:filename>')
-def send_file(filename):
-    return send_from_directory('p', filename)
 
 # Le variabili globali per facilitare l'esecuzione
 COUNT_DOWN = 3
@@ -221,8 +212,9 @@ class Puzzle:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if not self.game_started:
                         if self.start_button.click(event):
-                            # Gestisci il click del pulsante start
-                            pass
+                            if self.difficulty:
+                                rows, cols = (3, 3) if self.difficulty == "easy" else (4, 4) if self.difficulty == "medium" else (5, 5)
+                                self.initialize_puzzle(self.difficulty, rows, cols)
                         elif self.easy_button.click(event):
                             self.difficulty = "easy"
                             self.initialize_puzzle("easy", 3, 3)

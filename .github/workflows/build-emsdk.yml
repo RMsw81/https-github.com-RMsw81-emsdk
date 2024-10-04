@@ -41,11 +41,6 @@ jobs:
           echo "Checking if main.py runs without errors..."
           python p/main.py  # Test if main.py can be executed without errors
 
-      - name: Create build directory
-        run: |
-          echo "Creating build directory..."
-          mkdir -p build  # Create build directory if it doesn't exist
-
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."

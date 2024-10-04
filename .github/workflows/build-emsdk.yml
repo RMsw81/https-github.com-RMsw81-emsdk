@@ -31,16 +31,14 @@ jobs:
           pip install pygbag
           git clone https://github.com/emscripten-core/emsdk.git
 
-      - name: Build WASM Game
+      - name: Build WASM Game with Debugging
         run: |
+          set -x  # Abilita il logging dettagliato
           echo "Starting the game build..."
-          pygbag p/main.py || echo "Build failed"  # Log di errore per la build
+          pygbag p/main.py || echo "Build failed"  # Stampa messaggio in caso di errore
 
       - name: List directory contents after build
-        run: ls -R build  # Verifica se la directory build è stata creata
-
-      - name: List build/web contents
-        run: ls -R build/web || echo "Directory build/web does not exist"  # Verifica la directory build/web
+        run: ls -R build || echo "Directory build does not exist"  # Verifica se la directory build è stata creata
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

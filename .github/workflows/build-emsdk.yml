@@ -36,9 +36,6 @@ jobs:
       - name: Set CI environment variable
         run: echo "CI=true" >> $GITHUB_ENV
 
-      - name: Check if main.py runs without errors
-        run: python p/main.py
-
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."

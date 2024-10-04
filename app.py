@@ -1,12 +1,11 @@
 import re
+import os
+import base64
+import mimetypes
 from flask import Flask, jsonify, render_template, redirect, url_for, request, flash, send_from_directory
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql.cursors
-import subprocess
-import os
-import base64
-import mimetypes
 
 # Aggiungi il MIME type per i file .wasm
 mimetypes.add_type('application/wasm', '.wasm')
@@ -25,8 +24,6 @@ db_name = 'RobertaMerlo$db'
 
 # Crea la connessione al database
 def get_db_connection():
-
-
     try:
         return pymysql.connect(
             host=db_host,
@@ -42,15 +39,33 @@ def get_db_connection():
 
 # Inizializza Flask-Login
 login_manager = LoginManager()
-
-
 login_manager.init_app(app)
-
 login_manager.login_view = 'login'
+
+# UserMixin e User
+class User(UserMixin):
+    def __init__(self, id, username):
+        self.id = id
+        self.username = username
+
+@login_manager.user_loader
+def load_user(user_id):
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = 'SELECT * FROM user WHERE id = %s'
+            cursor.execute(sql, (user_id,))
+            user = cursor.fetchone()
+            if user:
+                return User(user['id'], user['username'])
+    except pymysql.MySQLError as e:
+        print(f"Errore nel caricamento dell'utente: {e}")
+    finally:
+        connection.close()
+    return None
 
 # Funzione per creare il database e la tabella
 def create_database_and_table():
-    
     connection = pymysql.connect(
         host=db_host,
         user=db_user,
@@ -58,8 +73,8 @@ def create_database_and_table():
     )
     try:
         with connection.cursor() as cursor:
-            cursor.execute("CREATE DATABASE IF NOT EXISTS db")
-            connection.select_db('db')
+            cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+            connection.select_db(db_name)
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS user (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -76,29 +91,6 @@ def create_database_and_table():
 # Esegui la creazione del database e della tabella prima di avviare l'app
 create_database_and_table()
 
-# UserMixin e User
-class User(UserMixin):
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password = password
-
-@login_manager.user_loader
-def load_user(user_id):
-    connection = get_db_connection()
-    try:
-        with connection.cursor() as cursor:
-            sql = 'SELECT * FROM user WHERE id = %s'
-            cursor.execute(sql, (user_id,))
-            user = cursor.fetchone()
-            if user:
-                return User(user['id'], user['username'], user['password'])
-    except pymysql.MySQLError as e:
-        print(f"Errore nel caricamento dell'utente: {e}")
-    finally:
-        connection.close()
-    return None
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -111,7 +103,6 @@ def start_p():
 
     # Controlla se il file esiste
     if not os.path.isfile(index_path):
-        # Se il file non esiste, restituisci un errore 404
         return jsonify({'error': 'File non trovato', 'path': index_path}), 404
 
     # Se il file esiste, invialo come risposta
@@ -121,7 +112,6 @@ def start_p():
 @login_required
 def serve_apk():
     return send_from_directory('/home/RobertaMerlo/My_Games/p/build/web', 'p.apk')
-
 
 @app.route('/assets/games/<path:filename>')
 @login_required
@@ -207,7 +197,7 @@ def login():
                 user = cursor.fetchone()
 
                 if user and check_password_hash(user['password'], password):
-                    user_obj = User(user['id'], user['username'], user['password'])
+                    user_obj = User(user['id'], user['username'])
                     login_user(user_obj)
                     return redirect(url_for('index'))
                 else:
@@ -230,3 +220,12 @@ def logout():
 @login_required
 def serve_file(filename):
     return send_from_directory('p/build/web', filename)
+
+@app.route('/user', methods=['GET'])
+@login_required
+def get_user():
+    """Restituisce il nome dell'utente loggato."""
+    return jsonify({'username': current_user.username})
+
+if __name__ == '__main__':
+    app.run(debug=True)

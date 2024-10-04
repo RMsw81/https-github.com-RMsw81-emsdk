@@ -7,6 +7,8 @@ import getpass
 import os
 import platform
 import sys
+import js  # Importa il modulo JavaScript per l'interazione con localStorage
+import json  # Importa il modulo json per la serializzazione e deserializzazione
 
 # Controllo per la piattaforma Emscripten
 if sys.platform == "emscripten":
@@ -29,12 +31,20 @@ except pygame.error as e:
 
 class RecordManager:
     def __init__(self):
-        self.records = {}
+        self.records = self.load_records()
+
+    def load_records(self):
+        """Carica i record dal localStorage."""
+        records_json = js.localStorage.getItem("puzzle_records")
+        if records_json:
+            return json.loads(records_json)  # Deserializza il JSON
+        return {}
 
     def save_record(self, time, user, difficulty):
         best_record = self.load_best_record(user, difficulty)
         if not best_record or time < best_record['time']:
-            self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now()}
+            self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now().isoformat()}
+            js.localStorage.setItem("puzzle_records", json.dumps(self.records))  # Serializza in JSON
             print(f"Record salvato per {user} in difficoltà {difficulty}: {time:.2f}s")
 
     def load_best_record(self, user, difficulty):
@@ -188,76 +198,115 @@ class Puzzle:
         if self.difficulty:
             self.best_time = self.record_manager.load_best_record(self.user, self.difficulty)
             if self.best_time:
-                self.best_time_text = f"Tempo: {self.elapsed_time:.2f} s Miglior record: {self.best_time['time']} s Utente: {self.user}"
+                self.best_time_text = f"Tempo: {self.elapsed_time:.2f}s (Miglior Tempo: {self.best_time['time']:.2f}s)"
             else:
-                self.best_time_text = f"Tempo: {self.elapsed_time:.2f} s Nessun record precedente"
+                self.best_time_text = f"Tempo: {self.elapsed_time:.2f}s (Nessun record precedente)"
+        else:
+            self.best_time_text = ""
 
-    def initialize_puzzle(self, difficulty, rows, cols):
-        print(f"Inizializzazione del puzzle con difficoltà: {difficulty}")
-        image = self.puzzle_images[difficulty]
-        self.puzzle = PuzzleGame(image, rows, cols)
-        self.start_time = time.time()  # Inizia il timer
-        self.elapsed_time = 0
-        self.game_started = True
-        self.update_best_time_text()
-
-    def draw(self):
-        self.screen.blit(self.background_image, (0, 0))
-        if not self.game_started:
+    def run(self):
+        while True:
+            self.screen.blit(self.background_image, (0, 0))
+            self.screen.blit(self.font.render(self.best_time_text, True, (255, 255, 255)), (50, 50))  # Mostra il miglior tempo
             self.start_button.draw(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                if self.start_button.click(event):
+                    self.difficulty_selection()
+
+            pygame.display.flip()
+
+    def difficulty_selection(self):
+        while not self.game_started:
+            self.screen.blit(self.background_image, (0, 0))
             self.easy_button.draw(self.screen)
             self.medium_button.draw(self.screen)
             self.hard_button.draw(self.screen)
-        else:
-            self.puzzle.draw(self.screen)
+            self.exit_button.draw(self.screen)
 
-    async def main(self):
-        running = True
-        while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    if not self.game_started:
-                        if self.start_button.click(event):
-                            if self.difficulty:
-                                rows, cols = (3, 3) if self.difficulty == "easy" else (4, 4) if self.difficulty == "medium" else (5, 5)
-                                self.initialize_puzzle(self.difficulty, rows, cols)
-                        elif self.easy_button.click(event):
-                            self.difficulty = "easy"
-                            self.initialize_puzzle("easy", 3, 3)
-                        elif self.medium_button.click(event):
-                            self.difficulty = "medium"
-                            self.initialize_puzzle("medium", 4, 4)
-                        elif self.hard_button.click(event):
-                            self.difficulty = "hard"
-                            self.initialize_puzzle("hard", 5, 5)
-                    else:
-                        self.puzzle.handle_click(event.pos)
+                    pygame.quit()
+                    exit()
 
-            if self.game_started and self.start_time:
-                self.elapsed_time = time.time() - self.start_time
+                if self.easy_button.click(event):
+                    self.start_game("easy")
 
-            self.draw()
-            pygame.display.flip(60)  # Aggiunto per limitare a 60 FPS
-            await asyncio.sleep(0)  # Rende il ciclo compatibile con async
+                if self.medium_button.click(event):
+                    self.start_game("medium")
 
-if __name__ == "__main__":
+                if self.hard_button.click(event):
+                    self.start_game("hard")
+
+                if self.exit_button.click(event):
+                    pygame.quit()
+                    exit()
+
+            pygame.display.flip()
+
+    def start_game(self, difficulty):
+        self.difficulty = difficulty
+        self.elapsed_time = 0
+        self.start_time = time.time()
+        self.game_started = True
+
+        puzzle_image = self.puzzle_images[difficulty]
+        puzzle = PuzzleGame(puzzle_image, 3, 3)
+
+        while self.game_started:
+            self.screen.blit(self.background_image, (0, 0))
+            puzzle.draw(self.screen)
+
+            if self.check_win(puzzle):
+                self.end_game()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    puzzle.handle_click(event.pos)
+
+            # Calcola e mostra il tempo trascorso
+            self.elapsed_time = time.time() - self.start_time
+            self.update_best_time_text()
+
+            pygame.display.flip()
+            self.clock.tick(30)
+
+    def check_win(self, puzzle):
+        if puzzle.check_win():
+            self.game_started = False
+            return True
+        return False
+
+    def end_game(self):
+        # Salva il record se esiste un nuovo miglior tempo
+        self.record_manager.save_record(self.elapsed_time, self.user, self.difficulty)
+
+        self.best_time_text = f"Congratulazioni! Hai vinto in {self.elapsed_time:.2f}s!"
+        self.screen.fill((0, 0, 0))
+        self.screen.blit(self.font.render(self.best_time_text, True, (255, 255, 255)), (200, 200))
+        pygame.display.flip()
+        time.sleep(3)  # Aspetta un momento prima di tornare al menu principale
+        self.difficulty_selection()
+
+async def main():
     pygame.init()
     pygame.display.set_caption("Puzzle Game")
-
-    # Setta le dimensioni della finestra del gioco
     screen = pygame.display.set_mode((700, 700))
-
-    # Definisci il font e l'orologio
     font = pygame.font.Font(None, 36)
     clock = pygame.time.Clock()
 
-    # Ottieni il nome dell'utente corrente
-    user = getpass.getuser()
-
-    # Crea una nuova istanza di Puzzle
+    # Acquisisci il nome utente loggato
+    user = getpass.getuser()  # Ottieni il nome utente loggato
     puzzle = Puzzle(screen, font, clock, user)
+    puzzle.run()
 
-    # Esegui il gioco
-    asyncio.run(puzzle.main())
+if __name__ == "__main__":
+    asyncio.run(main())  # Esegui il gioco

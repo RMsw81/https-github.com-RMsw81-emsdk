@@ -69,7 +69,12 @@ jobs:
 
     - name: Build WASM with emsdk
       run: |
-        ${SDKROOT}/python3-wasm p/main.py build -j$(nproc)
+        if [ -f "${SDKROOT}/python3-wasm" ]; then
+            ${SDKROOT}/python3-wasm p/main.py build -j$(nproc)
+        else
+            echo "Il file python3-wasm non esiste in ${SDKROOT}"
+            exit 1
+        fi
 
     - name: Generate libpygame.a static binaries archive
       run: |

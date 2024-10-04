@@ -60,4 +60,13 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+    - name: Start a local server to serve the game
+      run: |
+        echo "Starting a simple HTTP server to serve the game..."
+        cd p/build/web
+        python3 -m http.server 8000 &
+        sleep 5  # Give the server some time to start
 
+    - name: Open the game in the browser
+      run: |
+        echo "You can open the game in your browser at http://localhost:8000/index.html"

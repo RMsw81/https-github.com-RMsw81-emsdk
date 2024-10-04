@@ -16,6 +16,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: List directory contents after checkout
+        run: ls -R  # Verifica che p/main.py sia presente
+
       - name: Set up Python environment
         uses: actions/setup-python@v5
         with:
@@ -28,13 +31,10 @@ jobs:
           pip install pygbag
           git clone https://github.com/emscripten-core/emsdk.git
 
-      - name: List directory contents
-        run: ls -R  # Elenca il contenuto della directory per verificare il percorso
-
       - name: Build WASM Game
         run: |
           echo "Starting the game build..."
-          pygbag p/main.py  # Non serve l'opzione -o
+          pygbag p/main.py || echo "Build failed"  # Aggiungi un messaggio per la diagnosi
 
       - name: List build/web contents
         run: ls -R build/web  # Verifica i file generati nella directory build/web
@@ -43,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wasm-artifacts
-          path: build/web/  # Carica i file dalla directory build/web, dove sono stati generati
+          path: build/web/

@@ -13,7 +13,6 @@ mimetypes.add_type('application/wasm', '.wasm')
 
 # Genera una chiave segreta casuale di 24 byte
 secret_key = base64.urlsafe_b64encode(os.urandom(24)).decode('utf-8')
-#print(secret_key)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
@@ -42,6 +41,7 @@ def get_db_connection():
 # Inizializza Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
+
 login_manager.login_view = 'login'
 
 # Funzione per creare il database e la tabella

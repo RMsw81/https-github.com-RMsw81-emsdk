@@ -32,13 +32,19 @@ jobs:
       SDKROOT: /opt/python-wasm-sdk
 
     steps:
-    - uses: actions/checkout@v4.2.0
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.0
 
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y lz4
+        sudo apt-get install -y lz4 git
         pip3 install cython==3.0.10 pygame pygbag flask gunicorn
+
+    - name: Clone dev-wasm-python repository
+      run: |
+        git clone https://github.com/dev-wasm/dev-wasm-python
+        echo "Dev WASM Python repository clonato."
 
     - name: Create download directory
       run: |
@@ -78,7 +84,7 @@ jobs:
         echo "Rendere main.py eseguibile..."
         chmod +x /opt/python-wasm-sdk/python3-wasm/p/main.py
         echo "Avviando la build..."
-        /opt/python-wasm-sdk/python3-wasm/p/main.py build -j$(nproc) || { echo "Build failed"; exit 1; }
+        ./dev-wasm-python/python3-wasm p/main.py build -j$(nproc) || { echo "Build failed"; exit 1; }
 
     - name: Clean up
       run: |

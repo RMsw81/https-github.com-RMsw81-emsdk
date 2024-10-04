@@ -60,7 +60,7 @@ jobs:
         curl -sL --retry 5 -o ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE https://github.com/pygame-web/python-wasm-sdk/releases/download/$SDK_VERSION/$SDK_ARCHIVE
         tar -xvf ${{ github.workspace }}/sdk_downloads/$SDK_ARCHIVE -C /opt --use-compress-program=lz4
         echo "Contenuto di /opt dopo l'estrazione:"
-        ls -l /opt  # Verifica la directory principale /opt
+        ls -R /opt  # Mostra tutto il contenuto di /opt ricorsivamente
 
     - name: Build WASM with emsdk
       run: |

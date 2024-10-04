@@ -34,11 +34,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y ffmpeg
 
-    - name: List files in p/
-      run: |
-        echo "Listing files in the p/ directory:"
-        ls -la p/
-
     - name: Print current directory
       run: |
         echo "Current directory:"
@@ -55,9 +50,3 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    
-        done
-
-        # Restart your web app if needed
-        curl -s -X POST "https://www.pythonanywhere.com/api/v0/user/$PA_USERNAME/webapps/your_web_app_name/reload/" \
-          -H "Authorization: Token $PA_API_TOKEN"

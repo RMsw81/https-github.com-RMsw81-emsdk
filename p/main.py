@@ -19,6 +19,14 @@ if 'wasm' in platform.machine():
 # Le variabili globali per facilitare l'esecuzione
 COUNT_DOWN = 3
 
+# Controllo dell'audio
+audio_enabled = True
+try:
+    pygame.mixer.init()
+except pygame.error as e:
+    print(f"Audio non disponibile: {e}")
+    audio_enabled = False
+
 class RecordManager:
     def __init__(self):
         self.records = {}

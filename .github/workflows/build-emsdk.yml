@@ -50,6 +50,7 @@ jobs:
       run: |
         pip3 install cython==3.0.10
         pip3 install pygame
+        pip3 install pygbag
         pip3 install flask
         pip3 install gunicorn
         pygbag p/main.py

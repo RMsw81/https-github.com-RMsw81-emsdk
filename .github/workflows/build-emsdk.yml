@@ -34,6 +34,11 @@ jobs:
           mkdir -p p/assets/games/
           wget -O p/assets/games/default.tmpl https://pygame-web.github.io/archives/0.9/default.tmpl
           wget -O p/assets/games/favicon.png https://pygame-web.github.io/archives/0.9/favicon.png
+          
+      - name: Add local pythonrc.py
+        run: |
+          mkdir -p p/assets/games/
+          wget -O p/assets/games/pythonrc.py https://pygame-web.github.io/archives/0.9/pythonrc.py
 
       - name: Build WASM Game with local template
         run: |

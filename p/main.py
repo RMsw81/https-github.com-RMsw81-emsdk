@@ -61,13 +61,13 @@ class RecordManager:
         """Carica il miglior record salvato per un utente e una difficoltà."""
         return self.records.get((user, difficulty))
 
-    def load_image(path):
-        """Carica l'immagine dal percorso specificato."""
-        try:
-            return pygame.image.load(path)
-        except pygame.error as e:
-            print(f"Impossibile caricare l'immagine da {path}: {e}")
-            exit()
+def load_image(path):
+    """Carica l'immagine dal percorso specificato."""
+    try:
+        return pygame.image.load(path)
+    except pygame.error as e:
+        print(f"Impossibile caricare l'immagine da {path}: {e}")
+        exit()
 
 class Button:
     """Classe per gestire i bottoni nel gioco."""
@@ -202,7 +202,6 @@ class Puzzle:
             "medium": pygame.transform.scale(load_image("p/img/puzzle_image_medium.jpg"), (400, 400)),
             "hard": pygame.transform.scale(load_image("p/img/puzzle_image_hard.jpg"), (400, 400))
         }
-
         self.start_button = Button(pygame.transform.scale(load_image("p/img/start_button.png"), (100, 45)), (290, 520))
         self.easy_button = Button(pygame.transform.scale(load_image("p/img/easy_button.png"), (100, 45)), (180, 550))
         self.medium_button = Button(pygame.transform.scale(load_image("p/img/medium_button.png"), (100, 45)), (300, 550))

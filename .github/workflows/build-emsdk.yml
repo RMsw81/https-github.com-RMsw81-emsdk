@@ -16,9 +16,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: List directory contents after checkout
-        run: ls -R  # Verifica che p/main.py e i file locali siano presenti
-
       - name: Set up Python environment
         uses: actions/setup-python@v5
         with:
@@ -31,12 +28,19 @@ jobs:
           pip install pygbag
           git clone https://github.com/emscripten-core/emsdk.git
 
+      # Aggiungi il template e favicon scaricati manualmente
+      - name: Add local template and favicon
+        run: |
+          mkdir -p p/assets/games/
+          wget -O p/assets/games/default.tmpl https://pygame-web.github.io/archives/0.9/default.tmpl
+          wget -O p/assets/games/favicon.png https://pygame-web.github.io/archives/0.9/favicon.png
+
       - name: Build WASM Game with local template
         run: |
           set -e  # Interrompe se c'è un errore
           set -x  # Abilita logging dettagliato
           echo "Starting the game build with local template..."
-          pygbag p/main.py --template /home/RobertaMerlo/My_Games/p/assets/games/default.tmpl
+          pygbag p/main.py --template p/assets/games/default.tmpl
 
       - name: List directory contents after build
         run: ls -R build || echo "Directory build does not exist"
@@ -45,4 +49,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wasm-artifacts
-          path: build/web/  # Specifica solo il percorso della cartella build/web per l'upload
+          path: build/web/

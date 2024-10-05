@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: List directory contents after checkout
-        run: ls -R  # Verifica che p/main.py sia presente
+        run: ls -R  # Verifica che p/main.py e i file locali siano presenti
 
       - name: Set up Python environment
         uses: actions/setup-python@v5
@@ -31,13 +31,12 @@ jobs:
           pip install pygbag
           git clone https://github.com/emscripten-core/emsdk.git
 
-      - name: Build WASM Game with Debugging
+      - name: Build WASM Game with local template
         run: |
-          set -e  # Interrompe lo script se c'è un errore
+          set -e  # Interrompe se c'è un errore
           set -x  # Abilita logging dettagliato
-          echo "Starting the game build..."
-          pygbag p/main.py 2>&1  # Stampa l'output di Pygbag
-          ls -R build  # Verifica la creazione della directory build dopo il processo
+          echo "Starting the game build with local template..."
+          pygbag p/main.py --template p/assets/games/default.tmpl  # Usa il template locale
 
       - name: List directory contents after build
         run: ls -R build || echo "Directory build does not exist"

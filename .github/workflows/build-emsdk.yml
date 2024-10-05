@@ -36,7 +36,7 @@ jobs:
           set -e  # Interrompe se c'è un errore
           set -x  # Abilita logging dettagliato
           echo "Starting the game build with local template..."
-          pygbag p/main.py --template p/assets/games/default.tmpl  # Usa il template locale
+          pygbag p/main.py --template /home/RobertaMerlo/My_Games/p/assets/games/default.tmpl
 
       - name: List directory contents after build
         run: ls -R build || echo "Directory build does not exist"
@@ -45,4 +45,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: wasm-artifacts
-          path: build/web/
+          path: build/web/  # Specifica solo il percorso della cartella build/web per l'upload

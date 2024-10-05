@@ -6,6 +6,8 @@ from flask import Flask, jsonify, render_template, redirect, url_for, request, f
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql.cursors
+import json
+import js  # Importa il modulo JavaScript per interagire con localStorage
 
 # Aggiungi il MIME type per i file .wasm
 mimetypes.add_type('application/wasm', '.wasm')
@@ -243,6 +245,38 @@ def serve_file(filename):
 def get_user():
     """Restituisce il nome dell'utente loggato."""
     return jsonify({'username': current_user.username})
+
+# Gestione dei record con localStorage tramite Emscripten
+class RecordManager:
+    def __init__(self):
+        self.records = self.load_records()
+
+    def load_records(self):
+        """Carica i record dal localStorage del browser."""
+        try:
+            records_json = js.localStorage.getItem("puzzle_records")
+            if records_json:
+                return json.loads(records_json)  # Deserializza i dati in JSON
+        except Exception as e:
+            print(f"Errore durante il caricamento dei record dal localStorage: {e}")
+        return {}
+
+    def save_record(self, time, user, difficulty):
+        """Salva il record nel localStorage del browser."""
+        try:
+            best_record = self.load_best_record(user, difficulty)
+            if not best_record or time < best_record['time']:
+                # Aggiorna i record
+                self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now().isoformat()}
+                # Salva nel localStorage
+                js.localStorage.setItem("puzzle_records", json.dumps(self.records))
+                print(f"Record salvato per {user} in difficoltà {difficulty}: {time:.2f}s")
+        except Exception as e:
+            print(f"Errore durante il salvataggio dei record nel localStorage: {e}")
+
+    def load_best_record(self, user, difficulty):
+        """Carica il miglior record salvato per un utente e una difficoltà."""
+        return self.records.get((user, difficulty))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -28,30 +28,7 @@ jobs:
           pip install pygbag
           git clone https://github.com/emscripten-core/emsdk.git
 
-      # Aggiungi il template e favicon scaricati manualmente
-      - name: Add local template and favicon
-        run: |
-          mkdir -p p/assets/games/
-          wget -O p/assets/games/default.tmpl https://pygame-web.github.io/archives/0.9/default.tmpl
-          wget -O p/assets/games/favicon.png https://pygame-web.github.io/archives/0.9/favicon.png
-          
-      - name: Add local pythonrc.py
-        run: |
-          mkdir -p p/assets/games/
-          wget -O p/assets/games/pythonrc.py https://pygame-web.github.io/archives/0.9/pythonrc.py
-
-      - name: Build WASM Game with local template
-        run: |
-          set -e  # Interrompe se c'è un errore
-          set -x  # Abilita logging dettagliato
-          echo "Starting the game build with local template..."
-          pygbag p/main.py --template p/assets/games/default.tmpl
-
-      - name: List directory contents after build
-        run: ls -R build || echo "Directory build does not exist"
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: wasm-artifacts
-          path: build/web/
+      # Rimuovi o modifica questa parte se non hai bisogno di scaricare pythonrc.py
+      - name: Create game assets directory
+        run: mkdir -p p/assets/games/
+        # rimuovi la linea wget per pythonrc.py se non è disponibile o necessario

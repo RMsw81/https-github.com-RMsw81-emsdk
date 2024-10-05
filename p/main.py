@@ -205,6 +205,7 @@ class Puzzle:
         self.exit_button = Button(pygame.transform.scale(load_image("p/img/exit_button.png"), (60, 35)), (510, 570))
         self.back_button = Button(pygame.transform.scale(load_image("p/img/back_button.png"), (50, 40)), (130, 570))
 
+    def update_best_time_text(self):
         """Aggiorna il testo che mostra il miglior tempo registrato."""
         if self.difficulty:
             self.best_time = self.record_manager.load_best_record(self.user, self.difficulty)

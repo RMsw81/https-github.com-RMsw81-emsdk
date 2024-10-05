@@ -9,7 +9,7 @@ import sys
 import json  # Importa il modulo json per la serializzazione e deserializzazione
 import mimetypes  # Importa mimetypes per aggiungere supporto MIME
 
-# Aggiungi il MIME type per i file .wasm
+# MIME type per i file .wasm
 mimetypes.add_type('application/wasm', '.wasm')
 
 # Controllo per la piattaforma Emscripten
@@ -202,7 +202,6 @@ class Puzzle:
             "medium": pygame.transform.scale(load_image("p/img/puzzle_image_medium.jpg"), (400, 400)),
             "hard": pygame.transform.scale(load_image("p/img/puzzle_image_hard.jpg"), (400, 400))
         }
-
         self.start_button = Button(pygame.transform.scale(load_image("p/img/start_button.png"), (100, 45)), (290, 520))
         self.easy_button = Button(pygame.transform.scale(load_image("p/img/easy_button.png"), (100, 45)), (180, 550))
         self.medium_button = Button(pygame.transform.scale(load_image("p/img/medium_button.png"), (100, 45)), (300, 550))

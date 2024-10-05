@@ -192,8 +192,8 @@ class Puzzle:
 
     def load_assets(self):
     """Carica le risorse grafiche del gioco."""
-    self.background_image = pygame.transform.scale(load_image("p/img/background.jpg"), (700, 700))
-    self.puzzle_images = {
+        self.background_image = pygame.transform.scale(load_image("p/img/background.jpg"), (700, 700))
+        self.puzzle_images = {
         "easy": pygame.transform.scale(load_image("p/img/puzzle_image_easy.jpg"), (400, 400)),
         "medium": pygame.transform.scale(load_image("p/img/puzzle_image_medium.jpg"), (400, 400)),
         "hard": pygame.transform.scale(load_image("p/img/puzzle_image_hard.jpg"), (400, 400))

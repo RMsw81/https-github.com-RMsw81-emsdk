@@ -1,4 +1,4 @@
-name: Python application
+name: Applicazione Python
 
 on:
   push:
@@ -14,41 +14,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repository
+      - name: Checkout del repository
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
+      - name: Imposta Python 3.10
         uses: actions/setup-python@v3
         with:
           python-version: "3.10"
 
-      - name: Upgrade pip
+      - name: Aggiorna pip
         run: |
           python -m pip install --upgrade pip
 
-      - name: Install dependencies
+      - name: Installa dipendenze
         run: |
           pip install flake8 pygame pygbag black
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Install FFmpeg
+      - name: Installa FFmpeg
         run: |
-          echo "Installing FFmpeg..."
+          echo "Installazione di FFmpeg..."
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
-      - name: Print current directory
+      - name: Mostra la directory corrente
         run: |
-          echo "Current directory:"
+          echo "Directory corrente:"
           pwd
 
-      - name: Build game with pygbag
+      - name: Costruisci il gioco con pygbag
         run: |
-          echo "Building the game with pygbag..."
+          echo "Costruzione del gioco con pygbag..."
           pygbag p/main.py
 
-      - name: Lint with flake8
+      - name: Esegui linting con flake8
         run: |
-          echo "Running flake8 linter..."
+          echo "Esecuzione di flake8 linter..."
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+      # Step opzionale: distribuisci su GitHub Pages o altri servizi di hosting se necessario
+      # - name: Distribuisci su GitHub Pages
+      #   run: |
+      #     echo "Distribuzione su GitHub Pages..."
+      #     # Aggiungi qui i tuoi comandi di distribuzione

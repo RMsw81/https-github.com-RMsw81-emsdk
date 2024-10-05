@@ -8,7 +8,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import pymysql.cursors
 import datetime
 import json
-import js  # Importa il modulo JavaScript per interagire con localStorage
+
+# Import `js` only if running in WebAssembly (Pygbag or Emscripten environment)
+if 'PYGBAG' in os.environ:
+    import js  # Importa il modulo JavaScript per interagire con localStorage solo in ambiente WebAssembly
 
 # Aggiungi il MIME type per i file .wasm
 mimetypes.add_type('application/wasm', '.wasm')
@@ -254,26 +257,28 @@ class RecordManager:
 
     def load_records(self):
         """Carica i record dal localStorage del browser."""
-        try:
-            records_json = js.localStorage.getItem("puzzle_records")
-            if records_json:
-                return json.loads(records_json)  # Deserializza i dati in JSON
-        except Exception as e:
-            print(f"Errore durante il caricamento dei record dal localStorage: {e}")
+        if 'PYGBAG' in os.environ:
+            try:
+                records_json = js.localStorage.getItem("puzzle_records")
+                if records_json:
+                    return json.loads(records_json)  # Deserializza i dati in JSON
+            except Exception as e:
+                print(f"Errore durante il caricamento dei record dal localStorage: {e}")
         return {}
 
     def save_record(self, time, user, difficulty):
         """Salva il record nel localStorage del browser."""
-        try:
-            best_record = self.load_best_record(user, difficulty)
-            if not best_record or time < best_record['time']:
-                # Aggiorna i record
-                self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now().isoformat()}
-                # Salva nel localStorage
-                js.localStorage.setItem("puzzle_records", json.dumps(self.records))
-                print(f"Record salvato per {user} in difficoltà {difficulty}: {time:.2f}s")
-        except Exception as e:
-            print(f"Errore durante il salvataggio dei record nel localStorage: {e}")
+        if 'PYGBAG' in os.environ:
+            try:
+                best_record = self.load_best_record(user, difficulty)
+                if not best_record or time < best_record['time']:
+                    # Aggiorna i record
+                    self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now().isoformat()}
+                    # Salva nel localStorage
+                    js.localStorage.setItem("puzzle_records", json.dumps(self.records))
+                    print(f"Record salvato per {user} in difficoltà {difficulty}: {time:.2f}s")
+            except Exception as e:
+                print(f"Errore durante il salvataggio dei record nel localStorage: {e}")
 
     def load_best_record(self, user, difficulty):
         """Carica il miglior record salvato per un utente e una difficoltà."""

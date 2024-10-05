@@ -33,10 +33,11 @@ jobs:
 
       - name: Build WASM Game with Debugging
         run: |
-          set -x  # Abilita il logging dettagliato
+          set -e  # Interrompe lo script se c'è un errore
+          set -x  # Abilita logging dettagliato
           echo "Starting the game build..."
-          pygbag p/main.py > pygbag_log.txt 2>&1 || echo "Build failed"
-          cat pygbag_log.txt  # Mostra l'intero log di Pygbag
+          pygbag p/main.py 2>&1  # Stampa l'output di Pygbag
+          ls -R build  # Verifica la creazione della directory build dopo il processo
 
       - name: List directory contents after build
         run: ls -R build || echo "Directory build does not exist"

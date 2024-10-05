@@ -51,6 +51,8 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(user_id):
     connection = get_db_connection()
+    if connection is None:
+        return None  # Gestione dell'errore di connessione
     try:
         with connection.cursor() as cursor:
             sql = 'SELECT * FROM user WHERE id = %s'
@@ -73,8 +75,15 @@ def create_database_and_table():
     )
     try:
         with connection.cursor() as cursor:
+            # Crea il database, se non esiste
             cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
-            connection.select_db(db_name)
+            connection.commit()
+
+        # Connettiti al database appena creato
+        connection.select_db(db_name)
+
+        # Crea la tabella degli utenti, se non esiste
+        with connection.cursor() as cursor:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS user (
                     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -99,7 +108,7 @@ def index():
 @login_required
 def start_p():
     # Definisci il percorso del file HTML
-    index_path = 'p/build/web/index.html'
+    index_path = os.path.join(app.root_path, 'p/build/web/index.html')
 
     # Controlla se il file esiste
     if not os.path.isfile(index_path):
@@ -159,6 +168,10 @@ def register():
             return redirect(url_for('register'))
 
         connection = get_db_connection()
+        if connection is None:
+            flash('Errore nella connessione al database', 'danger')
+            return redirect(url_for('register'))
+
         try:
             with connection.cursor() as cursor:
                 sql = 'SELECT * FROM user WHERE username = %s'
@@ -190,6 +203,10 @@ def login():
         password = request.form.get('password')
 
         connection = get_db_connection()
+        if connection is None:
+            flash('Errore nella connessione al database', 'danger')
+            return redirect(url_for('login'))
+
         try:
             with connection.cursor() as cursor:
                 sql = 'SELECT * FROM user WHERE username = %s'

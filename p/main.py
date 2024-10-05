@@ -6,7 +6,6 @@ import asyncio
 import os
 import platform
 import sys
-import js  # Importa il modulo JavaScript per l'interazione con localStorage
 import json  # Importa il modulo json per la serializzazione e deserializzazione
 
 # Controllo per la piattaforma Emscripten
@@ -34,20 +33,28 @@ class RecordManager:
 
     def load_records(self):
         """Carica i record dal localStorage."""
-        records_json = js.localStorage.getItem("puzzle_records")
-        if records_json:
-            return json.loads(records_json)  # Deserializza il JSON
+        try:
+            records_json = eval("window.localStorage.getItem('puzzle_records')")
+            if records_json:
+                return json.loads(records_json)  # Deserializza il JSON
+        except Exception as e:
+            print(f"Errore durante il caricamento dei record: {e}")
         return {}
 
     def save_record(self, time, user, difficulty):
         """Salva il record se è migliore di quello esistente."""
-        best_record = self.load_best_record(user, difficulty)
-        if not best_record or time < best_record['time']:
-            self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now().isoformat()}
-            js.localStorage.setItem("puzzle_records", json.dumps(self.records))  # Serializza in JSON
-            print(f"Record salvato per {user} in difficoltà {difficulty}: {time:.2f}s")
+        try:
+            best_record = self.load_best_record(user, difficulty)
+            if not best_record or time < best_record['time']:
+                self.records[(user, difficulty)] = {'time': time, 'date': datetime.datetime.now().isoformat()}
+                # Salva nel localStorage usando eval() per eseguire codice JS
+                eval(f"window.localStorage.setItem('puzzle_records', '{json.dumps(self.records)}')")
+                print(f"Record salvato per {user} in difficoltà {difficulty}: {time:.2f}s")
+        except Exception as e:
+            print(f"Errore durante il salvataggio dei record: {e}")
 
     def load_best_record(self, user, difficulty):
+        """Carica il miglior record salvato per un utente e una difficoltà."""
         return self.records.get((user, difficulty))
 
 def load_image(path):

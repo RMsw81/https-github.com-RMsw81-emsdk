@@ -9,7 +9,7 @@ import sys
 import json  # Importa il modulo json per la serializzazione e deserializzazione
 import mimetypes  # Importa mimetypes per aggiungere supporto MIME
 
-# Aggiungi il MIME type per i file .wasm
+# MIME type per i file .wasm
 mimetypes.add_type('application/wasm', '.wasm')
 
 # Controllo per la piattaforma Emscripten
@@ -61,13 +61,13 @@ class RecordManager:
         """Carica il miglior record salvato per un utente e una difficoltà."""
         return self.records.get((user, difficulty))
 
-def load_image(path):
-    """Carica l'immagine dal percorso specificato."""
-    try:
-        return pygame.image.load(path)
-    except pygame.error as e:
-        print(f"Impossibile caricare l'immagine da {path}: {e}")
-        exit()
+    def load_image(path):
+        """Carica l'immagine dal percorso specificato."""
+        try:
+            return pygame.image.load(path)
+        except pygame.error as e:
+            print(f"Impossibile caricare l'immagine da {path}: {e}")
+            exit()
 
 class Button:
     """Classe per gestire i bottoni nel gioco."""

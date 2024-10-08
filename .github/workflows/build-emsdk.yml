@@ -29,9 +29,15 @@ jobs:
           git clone https://github.com/emscripten-core/emsdk.git
           git clone https://github.com/pygame-web/pygbag.git
           git clone https://github.com/WebAssembly/WASI.git
+          sudo apt-get update
+          sudo apt-get install ffmpeg
+          pip install black
 
       - name: Create game assets directory
         run: mkdir -p p/assets/games/
 
-      - name: run pygbag
+      - name: Format code with Black
+        run: black .
+
+      - name: Run pygbag
         run: pygbag p/main.py

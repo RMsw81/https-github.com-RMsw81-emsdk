@@ -28,6 +28,7 @@ jobs:
           pip install pygbag
           git clone https://github.com/emscripten-core/emsdk.git
           git clone https://github.com/pygame-web/pygbag.git
+          git clone https://github.com/WebAssembly/WASI.git
 
       - name: Create game assets directory
         run: mkdir -p p/assets/games/

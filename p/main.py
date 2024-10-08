@@ -7,18 +7,18 @@ import os
 import platform
 import sys
 import json  # Importa il modulo json per la serializzazione e deserializzazione
-import mimetypes  # Importa mimetypes per aggiungere supporto MIME
+# import mimetypes  # Importa mimetypes per aggiungere supporto MIME
 
 # MIME type per i file .wasm
-mimetypes.add_type('application/wasm', '.wasm')
+# mimetypes.add_type('application/wasm', '.wasm')
 
 # Controllo per la piattaforma Emscripten
 if sys.platform == "emscripten":
     print("Running on Emscripten")
 
 # Controllo per la CPU WebAssembly
-if 'wasm' in platform.machine():
-    print("Running on WebAssembly")
+# if 'wasm' in platform.machine():
+  # print("Running on WebAssembly")
 
 # Le variabili globali per facilitare l'esecuzione
 COUNT_DOWN = 3

@@ -33,8 +33,11 @@ jobs:
           sudo apt-get install ffmpeg
           pip install black
 
-      - name: Create game assets directory
-        run: mkdir -p p/assets/games/
+      - name: Create game img directory
+        run: mkdir -p p/img/
+      - name: Create game sfx directory
+        run: mkdir -p p/sfx/
+        
 
       - name: Format code with Black
         run: black .

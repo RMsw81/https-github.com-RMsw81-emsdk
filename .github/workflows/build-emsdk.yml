@@ -27,8 +27,7 @@ jobs:
           pip install -r requirements.txt
           pip install pygbag
           git clone https://github.com/emscripten-core/emsdk.git
+          git clone https://github.com/pygame-web/pygbag.git
 
-      # Rimuovi o modifica questa parte se non hai bisogno di scaricare pythonrc.py
       - name: Create game assets directory
         run: mkdir -p p/assets/games/
-        # rimuovi la linea wget per pythonrc.py se non è disponibile o necessario

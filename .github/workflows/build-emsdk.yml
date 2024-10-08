@@ -32,3 +32,6 @@ jobs:
 
       - name: Create game assets directory
         run: mkdir -p p/assets/games/
+
+      - name: run pygbag
+        run: pygbag p/main.py
